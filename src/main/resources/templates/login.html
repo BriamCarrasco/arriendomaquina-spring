@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-    <head>
-        <title>Ejemplo Spring Security Login </title>
-        <link rel="stylesheet" type="text/css" href="/login.css">
-    </head>
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Arriendo de Maquinaria</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
 
-    <body>
-        <div th:if="${param.error}">
-            Invalid username and password.
-        </div>
-        <div th:if="${param.logout}">
-            You have been logged out.
-        </div>
-        <form th:action="@{/login}" method="post">
-            <div><label> User Name : <input type="text" name="username"/> </label></div>
-            <div><label> Password: <input type="password" name="password"/> </label></div>
-            <div><input type="submit" value="Sign In"/></div>
-        </form>
-    </body>
+<body class="bg-light" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+
+  <!-- Contenedor del login -->
+  <div style="background:white;border:1px solid var(--line);border-radius:14px;padding:2rem 2.5rem;width:100%;max-width:400px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+    
+    <h2 style="text-align:center;color:var(--blue-900);margin-bottom:1.5rem;">🌾 Iniciar sesión</h2>
+
+    <!-- Mensajes -->
+    <div th:if="${param.error}" class="alert alert-danger" style="color:#B91C1C;margin-bottom:1rem;text-align:center;">
+      Usuario o contraseña incorrectos.
+    </div>
+    <div th:if="${param.logout}" style="color:var(--green);margin-bottom:1rem;text-align:center;">
+      Has cerrado sesión correctamente.
+    </div>
+
+    <!-- Formulario -->
+    <form th:action="@{/login}" method="post" class="vstack gap-3">
+      <div style="margin-bottom:1rem;">
+        <label style="font-weight:600;color:var(--ink);">Usuario</label>
+        <input type="text" name="username" placeholder="Ingresa tu usuario" required
+               style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;margin-top:4px;">
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label style="font-weight:600;color:var(--ink);">Contraseña</label>
+        <input type="password" name="password" placeholder="••••••••" required
+               style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;margin-top:4px;">
+      </div>
+
+      <button type="submit" class="btn" style="width:100%;">Entrar</button>
+    </form>
+  </div>
+
+</body>
 </html>
