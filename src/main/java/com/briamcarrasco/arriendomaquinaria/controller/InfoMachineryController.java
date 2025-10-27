@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class InfoMachineryController {
 
-    @GetMapping("/infoMachinery")
+    @GetMapping("/infomachinery")
     public String infoMachinery() {
-        return "infoMachinery";
+        return "infomachinery";
     }
 }

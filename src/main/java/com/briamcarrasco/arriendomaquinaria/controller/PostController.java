@@ -6,7 +6,7 @@ public class PostController {
 
     @GetMapping("/postmachinery")
     public String postMachinery() {
-        return "postMachinery";
+        return "postmachinery";
     }
     
 }

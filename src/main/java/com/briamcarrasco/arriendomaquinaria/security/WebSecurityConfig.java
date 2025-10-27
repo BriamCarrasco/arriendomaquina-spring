@@ -13,46 +13,52 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-        .authorizeHttpRequests((requests) -> requests
-            .requestMatchers("/", "/home", "/register", "/search").permitAll()
-            .requestMatchers("/**.css").permitAll()
-            .anyRequest().authenticated()
-        )
-        .formLogin((form) -> form
-            .loginPage("/login")
-            .permitAll()
-        )
-        .logout((logout) -> logout.permitAll());
+            .authorizeHttpRequests((requests) -> requests
+                // Permitir acceso público a login y recursos estáticos
+                .requestMatchers("/login", "/style.css", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                // Todo lo demás requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .formLogin((form) -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/home", true)
+                .permitAll()
+            )
+            .logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            );
         return http.build();
     }
 
     @Bean
-    @Description("In Memory UserDetails service registered since DB doesn't have user table")
+    @Description("Usuarios en memoria para pruebas")
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
                 .username("user")
                 .password(passwordEncoder().encode("userpassword"))
                 .roles("USER")
                 .build();
+
         UserDetails admin = User.builder()
                 .username("admin")
                 .password(passwordEncoder().encode("adminpassword"))
                 .roles("USER", "ADMIN")
                 .build();
+
         return new InMemoryUserDetailsManager(user, admin);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -1,16 +1,73 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Getting Started: Serving Web Content</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" type="text/css" href="/style.css">
-    </head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio | Arriendo de Maquinaria</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <body>
-        <h1 th:text="|Bienvenido a ${name}!|"></h1>
-        <div sec:authorize="isAuthenticated()">
-            <h1 th:inline="text">Hola <span th:remove="tag" sec:authentication="name"></span>!</h1>
-            <h2>Seguridad implementada con Spring Security</h2>
+  <!-- Topbar azul (similar a tu referencia) -->
+  <nav class="navbar-app">
+    <h2>🌾 Arriendo de Maquinaria</h2>
+    <div class="right">
+      <span sec:authorize="isAuthenticated()" th:inline="text">
+        Hola <span class="user-name" sec:authentication="name"></span> 👋
+      </span>
+    </div>
+  </nav>
+
+  <main class="container-app">
+    <h1 th:text="|Bienvenido a ${name}!|"></h1>
+    <h2>Plataforma segura con Spring Security</h2>
+
+    <!-- Bloque autenticado -->
+    <div sec:authorize="isAuthenticated()">
+      <div class="section-title">
+        <span class="badge badge-info">Inicio</span>
+        <strong>Acciones rápidas</strong>
+      </div>
+
+      <div class="card-grid">
+        <!-- Buscar -->
+        <div class="card">
+          <h4>Buscar maquinaria</h4>
+          <p>Explora equipos disponibles por nombre, categoría o estado.</p>
+          <div class="actions">
+            <a th:href="@{/search}" class="btn">Ir a búsqueda</a>
+          </div>
         </div>
-    </body>
+
+        <!-- Estado (ejemplo badge verde tipo “reservado/activo”) -->
+        <div class="card">
+          <h4>Resumen</h4>
+          <p>Consulta el estado general de tus operaciones.</p>
+          <div class="actions">
+            <span class="badge badge-success">Activo</span>
+          </div>
+        </div>
+
+        <!-- Placeholder de futura función -->
+        <div class="card">
+          <h4>Reportes</h4>
+          <p>Genera reportes operativos (próximamente).</p>
+          <div class="actions">
+            <a href="#" class="btn btn-outline" onclick="return false;">Ver ejemplo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invitación a iniciar sesión -->
+    <div sec:authorize="!isAuthenticated()">
+      <div class="section-title">
+        <span class="badge badge-info">Acceso</span>
+        <strong>Zona privada</strong>
+      </div>
+      <p>Inicia sesión para acceder a las funciones privadas.</p>
+      <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+    </div>
+  </main>
+
+</body>
 </html>
