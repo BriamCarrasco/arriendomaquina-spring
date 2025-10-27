@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @Controller
 public class HomeController {
     
@@ -13,14 +12,14 @@ public class HomeController {
     public String home(@RequestParam(name="name", required = false, defaultValue = "Seguridad y calidad en el desarrollo")
     String name, Model model){
         model.addAttribute("name",name);
-        return "Home";
+        return "home";
     }
 
     @GetMapping("/")
     public String root(@RequestParam(name="name", required=false, defaultValue="Seguridad y Calidad en el Desarrollo")
     String name, Model model) {
     model.addAttribute("name", name);
-    return "Home";
+    return "home";
     }
 
     
