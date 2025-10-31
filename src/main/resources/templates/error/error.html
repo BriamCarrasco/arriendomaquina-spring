@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Error del sistema</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="container-app" style="text-align:center; padding:60px;">
+    <h1>⚠️ Ocurrió un error inesperado</h1>
+    <p th:text="${message != null ? message : 'Ha ocurrido un problema. Intenta nuevamente más tarde.'}"></p>
+    <div style="margin-top:25px;">
+      <a th:href="@{/landing}" class="btn">Volver al inicio</a>
+    </div>
+  </main>
+</body>
+</html>

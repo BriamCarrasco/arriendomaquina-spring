@@ -1,19 +1,24 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <title>Inicio | Arriendo de Maquinaria</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
-  <!-- Topbar azul (similar a tu referencia) -->
+  <!-- Barra superior -->
   <nav class="navbar-app">
     <h2>🌾 Arriendo de Maquinaria</h2>
     <div class="right">
+      <!-- Estado sesión -->
       <span sec:authorize="isAuthenticated()" th:inline="text">
         Hola <span class="user-name" sec:authentication="name"></span> 👋
       </span>
+      <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="btn btn-outline">Cerrar sesión</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn">Iniciar sesión</a>
     </div>
   </nav>
 
@@ -21,7 +26,7 @@
     <h1 th:text="|Bienvenido a ${name}!|"></h1>
     <h2>Plataforma segura con Spring Security</h2>
 
-    <!-- Bloque autenticado -->
+    <!-- 🔒 Contenido visible solo si está autenticado -->
     <div sec:authorize="isAuthenticated()">
       <div class="section-title">
         <span class="badge badge-info">Inicio</span>
@@ -29,7 +34,8 @@
       </div>
 
       <div class="card-grid">
-        <!-- Buscar -->
+
+        <!-- Buscar maquinaria (todos los usuarios autenticados) -->
         <div class="card">
           <h4>Buscar maquinaria</h4>
           <p>Explora equipos disponibles por nombre, categoría o estado.</p>
@@ -38,7 +44,31 @@
           </div>
         </div>
 
-        <!-- Estado (ejemplo badge verde tipo “reservado/activo”) -->
+        <!-- Publicar maquinaria (OWNER o ADMIN) -->
+        <div class="card">
+          <h4>Publicar maquinaria</h4>
+          <p>Sube tus propios equipos para arriendo y gestiona su disponibilidad.</p>
+          <div class="actions">
+            <a th:href="@{/owner/publicar}" class="btn"
+               sec:authorize="hasAnyRole('OWNER','ADMIN')">Publicar</a>
+            <button class="btn btn-disabled" disabled
+                    sec:authorize="!hasAnyRole('OWNER','ADMIN')">Solo propietarios</button>
+          </div>
+        </div>
+
+        <!-- Panel de administración (solo ADMIN) -->
+        <div class="card">
+          <h4>Panel de administración</h4>
+          <p>Gestiona usuarios, auditorías y estados de publicación.</p>
+          <div class="actions">
+            <a th:href="@{/admin/panel}" class="btn btn-outline"
+               sec:authorize="hasRole('ADMIN')">Abrir panel</a>
+            <span class="badge badge-info"
+                  sec:authorize="!hasRole('ADMIN')">Solo administradores</span>
+          </div>
+        </div>
+
+        <!-- Resumen general (todos los usuarios autenticados) -->
         <div class="card">
           <h4>Resumen</h4>
           <p>Consulta el estado general de tus operaciones.</p>
@@ -47,7 +77,7 @@
           </div>
         </div>
 
-        <!-- Placeholder de futura función -->
+        <!-- Reportes (placeholder futuro, visible para todos) -->
         <div class="card">
           <h4>Reportes</h4>
           <p>Genera reportes operativos (próximamente).</p>
@@ -58,15 +88,16 @@
       </div>
     </div>
 
-    <!-- Invitación a iniciar sesión -->
-    <div sec:authorize="!isAuthenticated()">
+    <!-- 🚫 Invitación para usuarios anónimos -->
+    <div sec:authorize="isAnonymous()">
       <div class="section-title">
         <span class="badge badge-info">Acceso</span>
         <strong>Zona privada</strong>
       </div>
-      <p>Inicia sesión para acceder a las funciones privadas.</p>
+      <p>Inicia sesión para acceder a las funciones de la plataforma.</p>
       <a th:href="@{/login}" class="btn">Iniciar sesión</a>
     </div>
+
   </main>
 
 </body>

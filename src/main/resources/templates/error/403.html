@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>403 – Acceso denegado</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="container-app" style="text-align:center; padding:60px;">
+    <h1>🚫 403 – Acceso denegado</h1>
+    <p>No tienes permisos para ver este recurso.</p>
+    <div style="margin-top:25px;">
+      <a th:href="@{/home}" class="btn">Volver al inicio</a>
+      <a th:href="@{/logout}" class="btn btn-outline">Cerrar sesión</a>
+    </div>
+  </main>
+</body>
+</html>
