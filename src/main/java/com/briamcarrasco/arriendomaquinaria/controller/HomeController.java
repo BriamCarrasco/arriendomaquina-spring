@@ -25,6 +25,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Authentication authentication, Model model) {
+    System.out.println("Authentication in /home: " + authentication);
         model.addAttribute("name", authentication != null ? authentication.getName() : "Invitado");
         model.addAttribute("maquinarias", repo.findAll()); 
         return "home";
