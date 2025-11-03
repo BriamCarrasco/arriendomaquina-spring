@@ -1,19 +1,19 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Inicio | Arriendo de Maquinaria</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
 
-  <!-- Topbar azul (similar a tu referencia) -->
   <nav class="navbar-app">
     <h2>🌾 Arriendo de Maquinaria</h2>
     <div class="right">
       <span sec:authorize="isAuthenticated()" th:inline="text">
         Hola <span class="user-name" sec:authentication="name"></span> 👋
       </span>
+      <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="btn btn-outline">Cerrar sesión</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn">Iniciar sesión</a>
     </div>
   </nav>
 
@@ -21,7 +21,7 @@
     <h1 th:text="|Bienvenido a ${name}!|"></h1>
     <h2>Plataforma segura con Spring Security</h2>
 
-    <!-- Bloque autenticado -->
+    <!-- 🔒 Contenido visible solo si está autenticado -->
     <div sec:authorize="isAuthenticated()">
       <div class="section-title">
         <span class="badge badge-info">Inicio</span>
@@ -29,7 +29,8 @@
       </div>
 
       <div class="card-grid">
-        <!-- Buscar -->
+
+        <!-- Buscar maquinaria -->
         <div class="card">
           <h4>Buscar maquinaria</h4>
           <p>Explora equipos disponibles por nombre, categoría o estado.</p>
@@ -38,7 +39,31 @@
           </div>
         </div>
 
-        <!-- Estado (ejemplo badge verde tipo “reservado/activo”) -->
+        <!-- Publicar maquinaria -->
+        <div class="card">
+          <h4>Publicar maquinaria</h4>
+          <p>Sube tus propios equipos para arriendo y gestiona su disponibilidad.</p>
+          <div class="actions">
+            <a th:href="@{/owner/publicar}" class="btn"
+               sec:authorize="hasAnyRole('OWNER','ADMIN')">Publicar</a>
+            <button class="btn btn-disabled" disabled
+                    sec:authorize="!hasAnyRole('OWNER','ADMIN')">Solo propietarios</button>
+          </div>
+        </div>
+
+        <!-- Panel de administración -->
+        <div class="card">
+          <h4>Panel de administración</h4>
+          <p>Gestiona usuarios, auditorías y estados de publicación.</p>
+          <div class="actions">
+            <a th:href="@{/admin/panel}" class="btn btn-outline"
+               sec:authorize="hasRole('ADMIN')">Abrir panel</a>
+            <span class="badge badge-info"
+                  sec:authorize="!hasRole('ADMIN')">Solo administradores</span>
+          </div>
+        </div>
+
+        <!-- Resumen -->
         <div class="card">
           <h4>Resumen</h4>
           <p>Consulta el estado general de tus operaciones.</p>
@@ -47,7 +72,7 @@
           </div>
         </div>
 
-        <!-- Placeholder de futura función -->
+        <!-- Reportes -->
         <div class="card">
           <h4>Reportes</h4>
           <p>Genera reportes operativos (próximamente).</p>
@@ -56,17 +81,52 @@
           </div>
         </div>
       </div>
+
+      <!-- 🧱 Nueva sección: listado de maquinarias -->
+      <div class="section-title" style="margin-top:32px;">
+        <span class="badge badge-info">Inventario</span>
+        <strong>Maquinaria disponible</strong>
+      </div>
+
+      <div th:if="${maquinarias != null and #lists.size(maquinarias) > 0}">
+        <table class="table" border="1" cellspacing="0" cellpadding="6">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Estado</th>
+              <th>Precio día</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="maq : ${maquinarias}">
+              <td th:text="${maq.id}"></td>
+              <td th:text="${maq.nombre}"></td>
+              <td th:text="${maq.categoria}"></td>
+              <td th:text="${maq.estado}"></td>
+              <td th:text="${#numbers.formatDecimal(maq.precioDia, 0, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p th:if="${maquinarias == null or #lists.isEmpty(maquinarias)}">
+        No hay maquinarias registradas actualmente.
+      </p>
+
     </div>
 
-    <!-- Invitación a iniciar sesión -->
-    <div sec:authorize="!isAuthenticated()">
+    <!-- 🚫 Invitación para usuarios anónimos -->
+    <div sec:authorize="isAnonymous()">
       <div class="section-title">
         <span class="badge badge-info">Acceso</span>
         <strong>Zona privada</strong>
       </div>
-      <p>Inicia sesión para acceder a las funciones privadas.</p>
+      <p>Inicia sesión para acceder a las funciones de la plataforma.</p>
       <a th:href="@{/login}" class="btn">Iniciar sesión</a>
     </div>
+
   </main>
 
 </body>

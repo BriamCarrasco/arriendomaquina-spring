@@ -21,8 +21,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-                // Permitir acceso público a login y recursos estáticos
-                .requestMatchers("/login", "/style.css", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                // Landing y recursos estáticos son públicos
+                .requestMatchers("/", "/landing", "/login",
+                        "/style.css", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
@@ -35,7 +36,8 @@ public class WebSecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
-            );
+            )
+            .exceptionHandling((ex) -> ex.accessDeniedPage("/403"));
         return http.build();
     }
 
@@ -47,6 +49,12 @@ public class WebSecurityConfig {
                 .password(passwordEncoder().encode("userpassword"))
                 .roles("USER")
                 .build();
+        
+        UserDetails owner = User.builder()
+        .username("owner")
+        .password(passwordEncoder().encode("ownerpassword"))
+        .roles("OWNER")  // propietario que publica/gestiona maquinaria
+        .build();
 
         UserDetails admin = User.builder()
                 .username("admin")
@@ -54,7 +62,7 @@ public class WebSecurityConfig {
                 .roles("USER", "ADMIN")
                 .build();
 
-        return new InMemoryUserDetailsManager(user, admin);
+        return new InMemoryUserDetailsManager(user, owner, admin);
     }
 
     @Bean

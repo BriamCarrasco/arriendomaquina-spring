@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>404 – Página no encontrada</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="container-app" style="text-align:center; padding:60px;">
+    <h1>🔎 404 – Página no encontrada</h1>
+    <p>La página que buscas no existe o fue movida.</p>
+    <div style="margin-top:25px;">
+      <a th:href="@{/landing}" class="btn">Ir al inicio</a>
+    </div>
+  </main>
+</body>
+</html>
