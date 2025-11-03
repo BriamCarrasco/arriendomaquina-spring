@@ -1,19 +1,14 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Inicio | Arriendo de Maquinaria</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
 
-  <!-- Barra superior -->
   <nav class="navbar-app">
     <h2>🌾 Arriendo de Maquinaria</h2>
     <div class="right">
-      <!-- Estado sesión -->
       <span sec:authorize="isAuthenticated()" th:inline="text">
         Hola <span class="user-name" sec:authentication="name"></span> 👋
       </span>
