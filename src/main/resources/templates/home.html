@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Inicio | Arriendo de Maquinaria</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -35,7 +35,7 @@
 
       <div class="card-grid">
 
-        <!-- Buscar maquinaria (todos los usuarios autenticados) -->
+        <!-- Buscar maquinaria -->
         <div class="card">
           <h4>Buscar maquinaria</h4>
           <p>Explora equipos disponibles por nombre, categoría o estado.</p>
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <!-- Publicar maquinaria (OWNER o ADMIN) -->
+        <!-- Publicar maquinaria -->
         <div class="card">
           <h4>Publicar maquinaria</h4>
           <p>Sube tus propios equipos para arriendo y gestiona su disponibilidad.</p>
@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <!-- Panel de administración (solo ADMIN) -->
+        <!-- Panel de administración -->
         <div class="card">
           <h4>Panel de administración</h4>
           <p>Gestiona usuarios, auditorías y estados de publicación.</p>
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <!-- Resumen general (todos los usuarios autenticados) -->
+        <!-- Resumen -->
         <div class="card">
           <h4>Resumen</h4>
           <p>Consulta el estado general de tus operaciones.</p>
@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <!-- Reportes (placeholder futuro, visible para todos) -->
+        <!-- Reportes -->
         <div class="card">
           <h4>Reportes</h4>
           <p>Genera reportes operativos (próximamente).</p>
@@ -86,6 +86,40 @@
           </div>
         </div>
       </div>
+
+      <!-- 🧱 Nueva sección: listado de maquinarias -->
+      <div class="section-title" style="margin-top:32px;">
+        <span class="badge badge-info">Inventario</span>
+        <strong>Maquinaria disponible</strong>
+      </div>
+
+      <div th:if="${maquinarias != null and #lists.size(maquinarias) > 0}">
+        <table class="table" border="1" cellspacing="0" cellpadding="6">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Estado</th>
+              <th>Precio día</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="maq : ${maquinarias}">
+              <td th:text="${maq.id}"></td>
+              <td th:text="${maq.nombre}"></td>
+              <td th:text="${maq.categoria}"></td>
+              <td th:text="${maq.estado}"></td>
+              <td th:text="${#numbers.formatDecimal(maq.precioDia, 0, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p th:if="${maquinarias == null or #lists.isEmpty(maquinarias)}">
+        No hay maquinarias registradas actualmente.
+      </p>
+
     </div>
 
     <!-- 🚫 Invitación para usuarios anónimos -->
