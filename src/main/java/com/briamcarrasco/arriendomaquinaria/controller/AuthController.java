@@ -35,28 +35,23 @@ public class AuthController {
             HttpServletResponse response) {
         try {
             UserDetails user = userDetailsService.loadUserByUsername(username);
-            System.out.println("Stored password: " + user.getPassword());  // Log temporal
-            System.out.println("Matches: " + passwordEncoder.matches(password, user.getPassword()));
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 return "redirect:/login?error";
             }
 
             String role = user.getAuthorities().stream().findFirst().map(Object::toString).orElse("ROLE_USER");
             String token = jwtAuthtenticationConfig.getJWTToken(username, role);
-            Cookie cookie = new Cookie("jwt_token", token.substring(TOKEN_BEARER_PREFIX.length()));  // Quita "Bearer " del valor de la cookie
+            Cookie cookie = new Cookie("jwt_token", token.substring(TOKEN_BEARER_PREFIX.length())); 
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(cookie);
-            System.out.println("Cookie set: " + cookie.getValue());  // Log temporal
             return "redirect:/home";
         } catch (Exception e) {
             e.printStackTrace();
-            // Maneja cualquier excepción (ej. usuario no encontrado) redirigiendo con error
             return "redirect:/login?error";
         }
     }
-// ...existing code...
 
     @GetMapping("/auth/login")
     public String redirectToLogin() {
