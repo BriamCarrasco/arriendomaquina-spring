@@ -30,7 +30,7 @@ public class WebSecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/landing", "/login", "/auth/login",
-                                 "/css/**", "/js/**", "/images/**", "/webjars/**", "/style.css")
+                                 "/css/**", "/js/**", "/images/**", "/webjars/**", "/style.css", "/api/**")
                 .permitAll()
                 .anyRequest().authenticated()
             )

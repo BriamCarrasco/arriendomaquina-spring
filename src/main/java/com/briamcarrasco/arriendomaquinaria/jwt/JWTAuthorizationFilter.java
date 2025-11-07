@@ -27,10 +27,15 @@ import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.*;
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-    String path = request.getServletPath();
-    return path.equals("/login") || path.equals("/auth/login") || path.startsWith("/css/")
-            || path.startsWith("/js/") || path.startsWith("/images/");
+        String path = request.getServletPath();
+        return path.equals("/login")
+                || path.equals("/auth/login")
+                || path.startsWith("/css/")
+                || path.startsWith("/js/")
+                || path.startsWith("/images/")
+                || path.startsWith("/api/machinery"); // <-- Añade aquí tu endpoint público
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -42,7 +47,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("jwt_token".equals(cookie.getName())) {
-                    return cookie.getValue();  // Devuelve el valor directamente (sin prefijo)
+                    return cookie.getValue(); // Devuelve el valor directamente (sin prefijo)
                 }
             }
         }
@@ -59,12 +64,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(Claims claims) {
         List<?> authorities = (List<?>) claims.get("authorities");
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(),
-                        null,
-                        authorities.stream().map(Object::toString).map(SimpleGrantedAuthority::new).collect(Collectors.toList())
-                );
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                claims.getSubject(),
+                null,
+                authorities.stream().map(Object::toString).map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList()));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
@@ -73,15 +77,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = resolveToken(request);
-            System.out.println("Resolved token: " + (token != null ? "present" : "null"));  // Log temporal
+            System.out.println("Resolved token: " + (token != null ? "present" : "null")); // Log temporal
             if (token != null) {
                 Claims claims = parseClaims(token);
-                System.out.println("Parsed claims: " + claims);  // Log temporal
+                System.out.println("Parsed claims: " + claims); // Log temporal
                 if (claims.get("authorities") != null) {
                     setAuthentication(claims);
-                    System.out.println("Authentication set for user: " + claims.getSubject());  // Log temporal
+                    System.out.println("Authentication set for user: " + claims.getSubject()); // Log temporal
                 } else {
-                    System.out.println("No authorities in claims");  // Log temporal
+                    System.out.println("No authorities in claims"); // Log temporal
                     SecurityContextHolder.clearContext();
                 }
             } else {
@@ -89,7 +93,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
-            System.out.println("JWT exception: " + e.getMessage());  // Log temporal
+            System.out.println("JWT exception: " + e.getMessage()); // Log temporal
             SecurityContextHolder.clearContext();
             chain.doFilter(request, response);
         }

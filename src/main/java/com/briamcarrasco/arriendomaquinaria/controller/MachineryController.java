@@ -17,7 +17,6 @@ public class MachineryController {
     @GetMapping("/inventario")
     public String home(Model model, @AuthenticationPrincipal UserDetails user) {
         model.addAttribute("maquinarias", repo.findAll());
-        // para tu <h1 th:text="|Bienvenido a ${name}!|">
         model.addAttribute("name", user != null ? user.getUsername() : "la plataforma");
         return "home";
     }
