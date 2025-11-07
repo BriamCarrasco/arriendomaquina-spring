@@ -4,6 +4,7 @@ import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -40,5 +41,10 @@ public class MachineryServiceImpl implements MachineryService {
     @Override
     public void deleteMachinery(Long id) {
         machineryRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Machinery> findAll() {
+        return machineryRepository.findAll();
     }
 }

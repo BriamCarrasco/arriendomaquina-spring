@@ -28,6 +28,5 @@ public class Machinery {
     private String status;
 
     @Column(name = "price_per_day", precision = 12, scale = 2, nullable = false)
-    @NotBlank
     private BigDecimal pricePerDay;
 }

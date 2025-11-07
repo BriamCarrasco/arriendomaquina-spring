@@ -35,7 +35,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 || path.startsWith("/css/")
                 || path.startsWith("/js/")
                 || path.startsWith("/images/")
-                || path.startsWith("/api/machinery"); // <-- Añade aquí tu endpoint público
+                || path.startsWith("/api/machinery");
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -47,7 +47,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("jwt_token".equals(cookie.getName())) {
-                    return cookie.getValue(); // Devuelve el valor directamente (sin prefijo)
+                    return cookie.getValue(); 
                 }
             }
         }

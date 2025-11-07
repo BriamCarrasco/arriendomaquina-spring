@@ -5,6 +5,7 @@ import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -19,6 +20,11 @@ public class AdminMachineryController {
     public ResponseEntity<Machinery> createMachinery(@RequestBody Machinery machinery) {
         Machinery created = machineryService.createMachinery(machinery);
         return ResponseEntity.ok(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Machinery>> findAll() {
+        return ResponseEntity.ok(machineryService.findAll());
     }
 
     @GetMapping("/{id}")

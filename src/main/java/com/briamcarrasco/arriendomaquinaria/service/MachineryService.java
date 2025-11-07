@@ -2,6 +2,7 @@ package com.briamcarrasco.arriendomaquinaria.service;
 
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import java.util.Optional;
+import java.util.List;
 
 public interface MachineryService {
     Machinery createMachinery(Machinery machinery);
@@ -11,4 +12,6 @@ public interface MachineryService {
     Machinery updateMachinery(Long id, Machinery machinery);
 
     void deleteMachinery(Long id);
+    
+    List<Machinery> findAll();
 }
