@@ -1,14 +1,15 @@
 package com.briamcarrasco.arriendomaquinaria.controller;
 
+import com.briamcarrasco.arriendomaquinaria.model.Category;
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 
 import java.util.Optional;
 
@@ -20,7 +21,21 @@ public class AdminMachineryController {
     private MachineryService machineryService;
 
     @PostMapping
-    public String createMachinery(@ModelAttribute Machinery machinery) {
+    public String createMachinery(
+            @RequestParam("nameMachinery") String nameMachinery,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("status") String status,
+            @RequestParam("pricePerDay") BigDecimal pricePerDay) {
+
+        Machinery machinery = new Machinery();
+        machinery.setNameMachinery(nameMachinery);
+        machinery.setStatus(status);
+        machinery.setPricePerDay(pricePerDay);
+
+        Category category = new Category();
+        category.setId(categoryId);
+        machinery.setCategory(category);
+
         machineryService.createMachinery(machinery);
         return "redirect:/home";
     }
@@ -52,7 +67,6 @@ public class AdminMachineryController {
         machineryService.deleteMachinery(id);
         return ResponseEntity.noContent().build();
     }
-
 
     @GetMapping("/search")
     public String buscarMaquinaria(@RequestParam(required = false) String name,

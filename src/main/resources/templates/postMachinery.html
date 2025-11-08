@@ -1,24 +1,59 @@
-<html></html>
-<head>
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
     <title>Publicar Maquinaria</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Publicar Maquinaria</h1>
-    <div sec:authorize="isAuthenticated()"></div>
-    <form action="/api/machinery" method="post">
-        <label for="nameMachinery">Nombre de la maquinaria:</label>
-        <input type="text" id="nameMachinery" name="nameMachinery" required>
+    <div sec:authorize="isAuthenticated()">
+      <form action="/api/machinery" method="post">
+        <div>
+          <label for="nameMachinery">Nombre de la maquinaria:</label>
+          <input type="text" id="nameMachinery" name="nameMachinery" required />
+        </div>
 
-        <label for="category">Categoría:</label>
-        <input type="text" id="category" name="category" required>
+        <div>
+          <label for="categoryId">Categoría:</label>
+          <select id="categoryId" name="categoryId" required>
+            <option value="">Seleccione una categoría</option>
+            <option
+              th:each="category : ${categories}"
+              th:value="${category.id}"
+              th:text="${category.name}"
+            ></option>
+          </select>
+        </div>
 
-        <label for="status">Estado:</label>
-        <input type="text" id="status" name="status" required>
+        <div>
+          <label for="status">Estado:</label>
+          <select id="status" name="status" required>
+            <option value="">Seleccione un estado</option>
+            <option
+              th:each="statusItem : ${statuses}"
+              th:value="${statusItem.name}"
+              th:text="${statusItem.name}"
+            ></option>
+          </select>
+        </div>
 
-        <label for="pricePerDay">Precio por día:</label>
-        <input type="number" id="pricePerDay" name="pricePerDay" step="0.01" required>
+        <div>
+          <label for="pricePerDay">Precio por día:</label>
+          <input
+            type="number"
+            id="pricePerDay"
+            name="pricePerDay"
+            step="0.01"
+            min="0"
+            required
+          />
+        </div>
 
         <button type="submit">Publicar</button>
-    </form>
-</body>
+      </form>
+    </div>
+  </body>
 </html>
