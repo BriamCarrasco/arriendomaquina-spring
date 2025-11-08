@@ -7,8 +7,10 @@ import java.util.List;
 public interface MachineryRepository extends JpaRepository<Machinery, Long> {
 
     boolean existsByNameMachinery(String nameMachinery);
+
+    Machinery findByNameMachinery(String nameMachinery);
     
     List<Machinery> findByNameMachineryContainingIgnoreCase(String nameMachinery);
 
-    List<Machinery> findByCategoryIgnoreCase(String category);
+    List<Machinery> findByCategory_NameIgnoreCase(String name);
 }
