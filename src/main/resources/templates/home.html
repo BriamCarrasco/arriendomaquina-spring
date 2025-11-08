@@ -44,7 +44,7 @@
           <h4>Publicar maquinaria</h4>
           <p>Sube tus propios equipos para arriendo y gestiona su disponibilidad.</p>
           <div class="actions">
-            <a th:href="@{/owner/publicar}" class="btn"
+            <a th:href="@{/postmachinery}" class="btn"
                sec:authorize="hasAnyRole('OWNER','ADMIN')">Publicar</a>
             <button class="btn btn-disabled" disabled
                     sec:authorize="!hasAnyRole('OWNER','ADMIN')">Solo propietarios</button>
