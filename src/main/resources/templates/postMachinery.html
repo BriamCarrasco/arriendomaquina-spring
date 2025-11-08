@@ -1,0 +1,24 @@
+<html></html>
+<head>
+    <title>Publicar Maquinaria</title>
+</head>
+<body>
+    <h1>Publicar Maquinaria</h1>
+    <div sec:authorize="isAuthenticated()"></div>
+    <form action="/api/machinery" method="post">
+        <label for="nameMachinery">Nombre de la maquinaria:</label>
+        <input type="text" id="nameMachinery" name="nameMachinery" required>
+
+        <label for="category">Categoría:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="status">Estado:</label>
+        <input type="text" id="status" name="status" required>
+
+        <label for="pricePerDay">Precio por día:</label>
+        <input type="number" id="pricePerDay" name="pricePerDay" step="0.01" required>
+
+        <button type="submit">Publicar</button>
+    </form>
+</body>
+</html>
