@@ -54,7 +54,7 @@ public class MachineryServiceImpl implements MachineryService {
     }
 
     @Override
-    public List<Machinery> findByCategory(String category) {
-        return machineryRepository.findByCategoryIgnoreCase(category);
+    public List<Machinery> findByCategory(String name) {
+        return machineryRepository.findByCategory_NameIgnoreCase(name);
     }
 }

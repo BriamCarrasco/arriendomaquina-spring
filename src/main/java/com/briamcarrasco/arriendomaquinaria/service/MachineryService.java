@@ -17,5 +17,5 @@ public interface MachineryService {
 
     List<Machinery> findByNameMachinery(String nameMachinery);
 
-    List<Machinery> findByCategory(String category);
+    List<Machinery> findByCategory(String name);
 }
