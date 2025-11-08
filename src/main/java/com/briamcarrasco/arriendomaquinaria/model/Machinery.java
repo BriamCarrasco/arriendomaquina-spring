@@ -19,14 +19,18 @@ public class Machinery {
     @NotBlank
     private String nameMachinery;
 
-    @Column(name = "category", nullable = false)
-    @NotBlank
-    private String category;
-
     @Column(name = "status", nullable = false)
     @NotBlank
     private String status;
 
     @Column(name = "price_per_day", precision = 12, scale = 2, nullable = false)
     private BigDecimal pricePerDay;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "machinery_info_id", nullable = true)
+    private MachineryInfo machineryInfo;
 }

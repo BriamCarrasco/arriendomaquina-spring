@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 
+
 @Data
 @Entity
 @Table (name = "tb_usersinfo")
@@ -40,8 +41,8 @@ public class UserInfo {
     private String country;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    private User user;
 
     public UserInfo() {
     }
