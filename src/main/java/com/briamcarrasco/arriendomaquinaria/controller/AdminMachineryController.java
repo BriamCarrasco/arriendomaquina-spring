@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
 
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/api/machinery")
 public class AdminMachineryController {
 
@@ -17,9 +20,9 @@ public class AdminMachineryController {
     private MachineryService machineryService;
 
     @PostMapping
-    public ResponseEntity<Machinery> createMachinery(@RequestBody Machinery machinery) {
-        Machinery created = machineryService.createMachinery(machinery);
-        return ResponseEntity.ok(created);
+    public String createMachinery(@ModelAttribute Machinery machinery) {
+        machineryService.createMachinery(machinery);
+        return "redirect:/home";
     }
 
     @GetMapping
@@ -48,5 +51,21 @@ public class AdminMachineryController {
     public ResponseEntity<Void> deleteMachinery(@PathVariable Long id) {
         machineryService.deleteMachinery(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/search")
+    public String buscarMaquinaria(@RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam String tipo,
+            Model model) {
+        List<Machinery> maquinarias = List.of();
+        if ("nombre".equals(tipo) && name != null && !name.isEmpty()) {
+            maquinarias = machineryService.findByNameMachinery(name);
+        } else if ("categoria".equals(tipo) && category != null && !category.isEmpty()) {
+            maquinarias = machineryService.findByCategory(category);
+        }
+        model.addAttribute("maquinarias", maquinarias);
+        return "search";
     }
 }

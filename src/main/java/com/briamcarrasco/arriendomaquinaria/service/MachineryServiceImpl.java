@@ -47,4 +47,14 @@ public class MachineryServiceImpl implements MachineryService {
     public List<Machinery> findAll() {
         return machineryRepository.findAll();
     }
+
+    @Override
+    public List<Machinery> findByNameMachinery(String nameMachinery) {
+        return machineryRepository.findByNameMachineryContainingIgnoreCase(nameMachinery);
+    }
+
+    @Override
+    public List<Machinery> findByCategory(String category) {
+        return machineryRepository.findByCategoryIgnoreCase(category);
+    }
 }

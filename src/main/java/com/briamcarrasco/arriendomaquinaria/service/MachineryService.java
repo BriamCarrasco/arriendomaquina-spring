@@ -14,4 +14,8 @@ public interface MachineryService {
     void deleteMachinery(Long id);
     
     List<Machinery> findAll();
+
+    List<Machinery> findByNameMachinery(String nameMachinery);
+
+    List<Machinery> findByCategory(String category);
 }
