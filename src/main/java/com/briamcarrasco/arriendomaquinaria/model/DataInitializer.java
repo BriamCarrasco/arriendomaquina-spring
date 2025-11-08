@@ -1,7 +1,11 @@
 package com.briamcarrasco.arriendomaquinaria.model;
 
 import com.briamcarrasco.arriendomaquinaria.model.User.Role;
+import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
 import com.briamcarrasco.arriendomaquinaria.repository.UserRepository;
+
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +19,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MachineryRepository machineryRepository;
 
     @Override
     public void run(String... args) {
@@ -43,6 +50,47 @@ public class DataInitializer implements CommandLineRunner {
             user2.setPassword(passwordEncoder.encode("password"));
             user2.setRole(Role.USER);
             userRepository.save(user2);
+        }
+
+        if (!machineryRepository.existsByNameMachinery("John Deere 5075E Tractor")) {
+            machineryRepository.save(new Machinery(
+                    null,
+                    "John Deere 5075E Tractor",
+                    "Agriculture",
+                    "Available",
+                    new BigDecimal("150.00")));
+        }
+        if (!machineryRepository.existsByNameMachinery("Case IH Axial-Flow 7150 Combine")) {
+            machineryRepository.save(new Machinery(
+                    null,
+                    "Case IH Axial-Flow 7150 Combine",
+                    "Agriculture",
+                    "Available",
+                    new BigDecimal("350.00")));
+        }
+        if (!machineryRepository.existsByNameMachinery("New Holland CR8.90 Combine")) {
+            machineryRepository.save(new Machinery(
+                    null,
+                    "New Holland CR8.90 Combine",
+                    "Agriculture",
+                    "Available",
+                    new BigDecimal("400.00")));
+        }
+        if (!machineryRepository.existsByNameMachinery("Kubota M7-171 Tractor")) {
+            machineryRepository.save(new Machinery(
+                    null,
+                    "Kubota M7-171 Tractor",
+                    "Agriculture",
+                    "Available",
+                    new BigDecimal("180.00")));
+        }
+        if (!machineryRepository.existsByNameMachinery("Claas Lexion 780 Combine")) {
+            machineryRepository.save(new Machinery(
+                    null,
+                    "Claas Lexion 780 Combine",
+                    "Agriculture",
+                    "Available",
+                    new BigDecimal("420.00")));
         }
     }
 }
