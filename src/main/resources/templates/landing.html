@@ -1,45 +1,80 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-  <meta charset="UTF-8">
-  <title>Bienvenido | Arriendo de Maquinaria</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bienvenido | Arriendo de Maquinaria</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .banner-app {
+        width: 100%;
+        background: #f9e79f;
+        text-align: center;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .banner-app img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .banner-app h3 {
+        margin: 16px 0;
+        padding: 16px;
+        color: #b9770e;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar-app">
+      <h2>🌾 Arriendo de Maquinaria</h2>
+      <div class="right">
+        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+      </div>
+    </nav>
 
-  <nav class="navbar-app">
-    <h2>🌾 Arriendo de Maquinaria</h2>
-    <div class="right">
-      <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+    <div class="banner-app">
+      <img src="/images/banner_1.png" alt="Banner Maquinaria" />
     </div>
-  </nav>
 
-  <main class="container-app">
-    <section class="hero" style="text-align:center; margin: 48px 0;">
-      <h1>Arrienda y gestiona maquinaria agrícola</h1>
-      <p>Explora equipos, publica los tuyos y controla tus operaciones de forma segura.</p>
+    <main class="container-app">
+      <section class="hero" style="text-align: center; margin: 48px 0">
+        <h1>Arrienda y gestiona maquinaria agrícola</h1>
+        <p>
+          Explora equipos, publica los tuyos y controla tus operaciones de forma
+          segura.
+        </p>
 
-      <div style="margin-top:20px;">
-        <a th:href="@{/login}" class="btn">Comenzar</a>
-      </div>
-    </section>
+        <div style="margin-top: 20px">
+          <a th:href="@{/login}" class="btn">Comenzar</a>
+        </div>
+      </section>
 
-    <section class="features card-grid">
-      <div class="card">
-        <h4>🔍 Buscar</h4>
-        <p>Encuentra maquinaria por nombre, categoría o estado.</p>
-      </div>
-      <div class="card">
-        <h4>⚙️ Publicar</h4>
-        <p>Agrega tus equipos disponibles para arriendo (requiere inicio de sesión).</p>
-      </div>
-      <div class="card">
-        <h4>📊 Control</h4>
-        <p>Revisa arriendos, estados y reportes en un solo lugar.</p>
-      </div>
-    </section>
-  </main>
-
-</body>
+      <section class="features card-grid">
+        <div class="card">
+          <h4>🔍 Buscar</h4>
+          <p>Encuentra maquinaria por nombre, categoría o estado.</p>
+        </div>
+        <div class="card">
+          <h4>⚙️ Publicar</h4>
+          <p>
+            Agrega tus equipos disponibles para arriendo (requiere inicio de
+            sesión).
+          </p>
+        </div>
+        <div class="card">
+          <h4>📊 Control</h4>
+          <p>Revisa arriendos, estados y reportes en un solo lugar.</p>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
