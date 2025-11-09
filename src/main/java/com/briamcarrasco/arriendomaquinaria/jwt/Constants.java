@@ -5,6 +5,12 @@ import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
 
+/**
+ * Clase que contiene constantes y utilidades para la configuración de JWT y
+ * seguridad en el sistema.
+ * Incluye rutas, claves, parámetros de expiración y métodos para obtener la
+ * clave de firma.
+ */
 public class Constants {
 
     // Spring Security
@@ -17,6 +23,12 @@ public class Constants {
     public static final long TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24; // 24h
     public static final String SUPER_SECRET_KEY = getEnvSecret();
 
+    /**
+     * Obtiene la clave secreta JWT desde las variables de entorno.
+     *
+     * @return clave secreta en formato String
+     * @throws IllegalStateException si la variable de entorno no está definida
+     */
     private static String getEnvSecret() {
         String key = System.getenv("JWT_SECRET_KEY");
         if (key == null || key.isEmpty()) {
@@ -25,6 +37,13 @@ public class Constants {
         return key;
     }
 
+    /**
+     * Decodifica la clave secreta en base64 y retorna el objeto SecretKey para
+     * firmar JWT.
+     *
+     * @param base64 clave secreta en base64
+     * @return objeto SecretKey para la firma
+     */
     public static SecretKey getSigningKey(String base64) {
         byte[] keyBytes = Decoders.BASE64.decode(base64);
         return Keys.hmacShaKeyFor(keyBytes);

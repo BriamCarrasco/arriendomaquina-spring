@@ -1,0 +1,73 @@
+<form
+  th:action="@{/api/machinery/search}"
+  method="get"
+  style="margin-bottom: 16px"
+>
+  <label>
+    <input
+      type="radio"
+      name="tipo"
+      value="nombre"
+      checked
+      onclick="toggleSearch('nombre')"
+    />
+    Buscar por nombre
+  </label>
+  <label>
+    <input
+      type="radio"
+      name="tipo"
+      value="categoria"
+      onclick="toggleSearch('categoria')"
+    />
+    Buscar por categoría
+  </label>
+  <br />
+  <input
+    type="text"
+    id="nameInput"
+    name="name"
+    placeholder="Nombre de maquinaria"
+  />
+  <input
+    type="text"
+    id="categoryInput"
+    name="category"
+    placeholder="Categoría"
+    disabled
+  />
+  <button type="submit" class="btn">Buscar</button>
+</form>
+<script>
+  function toggleSearch(tipo) {
+    document.getElementById("nameInput").disabled = tipo !== "nombre";
+    document.getElementById("categoryInput").disabled = tipo !== "categoria";
+  }
+</script>
+
+<div th:if="${maquinarias != null}">
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Estado</th>
+      <th>Precio por día</th>
+      <th>Acciones</th>
+    </tr>
+    <tr th:each="maq : ${maquinarias}">
+      <td th:text="${maq.id}"></td>
+      <td th:text="${maq.nameMachinery}"></td>
+      <td
+        th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}"
+      ></td>
+      <td th:text="${maq.status}"></td>
+      <td
+        th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}"
+      ></td>
+      <td>
+        <a th:href="@{/machinerydetail(id=${maq.id})}" class="btn">Ver más información</a>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Publicar Maquinaria</title>
+  </head>
+  <body>
+    <h1>Publicar Maquinaria</h1>
+    <div sec:authorize="isAuthenticated()">
+      <form action="/api/machinery" method="post">
+        <div>
+          <label for="nameMachinery">Nombre de la maquinaria:</label>
+          <input type="text" id="nameMachinery" name="nameMachinery" required />
+        </div>
+
+        <div>
+          <label for="categoryId">Categoría:</label>
+          <select id="categoryId" name="categoryId" required>
+            <option value="">Seleccione una categoría</option>
+            <option
+              th:each="category : ${categories}"
+              th:value="${category.id}"
+              th:text="${category.name}"
+            ></option>
+          </select>
+        </div>
+
+        <div>
+          <label for="status">Estado:</label>
+          <select id="status" name="status" required>
+            <option value="">Seleccione un estado</option>
+            <option
+              th:each="statusItem : ${statuses}"
+              th:value="${statusItem.name}"
+              th:text="${statusItem.name}"
+            ></option>
+          </select>
+        </div>
+
+        <div>
+          <label for="pricePerDay">Precio por día:</label>
+          <input
+            type="number"
+            id="pricePerDay"
+            name="pricePerDay"
+            step="0.01"
+            min="0"
+            required
+          />
+        </div>
+
+        <button type="submit">Publicar</button>
+      </form>
+    </div>
+  </body>
+</html>

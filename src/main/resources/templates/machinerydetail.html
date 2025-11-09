@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Maquinaria | Arriendo de Maquinaria</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="navbar-app">
+      <h2>🌾 Arriendo de Maquinaria</h2>
+      <div class="right">
+        <span sec:authorize="isAuthenticated()" th:inline="text">
+          Hola <span class="user-name" sec:authentication="name"></span> 👋
+        </span>
+        <a
+          sec:authorize="isAuthenticated()"
+          th:href="@{/logout}"
+          class="btn btn-outline"
+          >Cerrar sesión</a
+        >
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+          >Iniciar sesión</a
+        >
+      </div>
+    </nav>
+
+    <main class="container-app">
+      <div th:if="${machinery != null}" class="machinery-detail">
+        <h1 th:text="${machinery.nameMachinery}">Nombre de la Maquinaria</h1>
+        
+        <div class="machinery-detail-content">
+          <div class="machinery-image">
+            <img th:src="@{${machinery.imageUrl}}" 
+                 th:alt="${machinery.nameMachinery}">
+          </div>
+          
+          <div class="machinery-text">
+            <div class="machinery-info">
+              <h2>Información General</h2>
+              <p><strong>Estado:</strong> <span th:text="${machinery.status}">Estado</span></p>
+              <p><strong>Precio por día:</strong> $<span th:text="${machinery.pricePerDay}">0.00</span></p>
+              <p><strong>Categoría:</strong> <span th:text="${machinery.category.name}">Categoría</span></p>
+              
+              <div th:if="${machinery.machineryInfo != null}">
+                <h3>Descripción</h3>
+                <p th:text="${machinery.machineryInfo.description}">Descripción de la maquinaria</p>
+              </div>
+            </div>
+            
+            <div class="actions">
+              <a th:href="@{/home}" class="btn">Volver al inicio</a>
+              <button class="btn btn-primary">Solicitar arriendo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div th:if="${machinery == null}" class="error-message">
+        <h2>Maquinaria no encontrada</h2>
+        <p>No se pudo encontrar la maquinaria solicitada.</p>
+        <a th:href="@{/home}" class="btn">Volver al inicio</a>
+      </div>
+    </main>
+  </body>
+</html>

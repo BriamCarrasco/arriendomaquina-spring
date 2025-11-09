@@ -10,6 +10,10 @@ import com.briamcarrasco.arriendomaquinaria.service.UserService;
 import com.briamcarrasco.arriendomaquinaria.model.User;
 import java.util.Map;
 
+/**
+ * Controlador para el registro de usuarios de prueba mediante la API.
+ * Expone un endpoint para crear usuarios enviando los datos en formato JSON.
+ */
 @RestController
 @RequestMapping("/api/register-test")
 public class RegisterTestController {
@@ -17,6 +21,14 @@ public class RegisterTestController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Registra un nuevo usuario en el sistema.
+     * Recibe los datos del usuario en el cuerpo de la petición y retorna el
+     * resultado del registro.
+     *
+     * @param request mapa con los campos username, password, email y role
+     * @return respuesta HTTP con el resultado del registro
+     */
     @PostMapping
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
         try {
@@ -37,5 +49,4 @@ public class RegisterTestController {
         }
     }
 
-    
 }
