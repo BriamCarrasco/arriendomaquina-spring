@@ -15,6 +15,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * Componente que inicializa datos de ejemplo en la base de datos al iniciar la
+ * aplicación.
+ * Crea estados, categorías, usuarios, información adicional de usuarios,
+ * maquinarias y arriendos de maquinaria si no existen.
+ * Los métodos getters y setters para los atributos de las entidades
+ * relacionadas se generan automáticamente mediante la anotación @Data de
+ * Lombok.
+ */
 @Component
 public class DataInitializer implements CommandLineRunner {
 

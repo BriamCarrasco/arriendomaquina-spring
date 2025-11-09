@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Servicio para la gestión de usuarios en el sistema de arriendo de maquinaria.
+ * Proporciona métodos para crear usuarios y manejar la lógica relacionada con
+ * ellos.
+ *
+ */
 @Service
 public class UserService {
 
@@ -15,6 +21,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Crea un nuevo usuario en el sistema.
+     *
+     * @param username nombre de usuario
+     * @param password contraseña del usuario (será encriptada)
+     * @param email    correo electrónico del usuario
+     * @param role     rol asignado al usuario
+     * @return el usuario creado y persistido
+     */
     public User createUser(String username, String password, String email, User.Role role) {
         User user = new User();
         user.setUsername(username);
