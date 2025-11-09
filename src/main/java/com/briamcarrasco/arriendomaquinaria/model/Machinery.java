@@ -51,6 +51,12 @@ public class Machinery {
     private BigDecimal pricePerDay;
 
     /**
+     * URL de la imagen de la maquinaria.
+     */
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    /**
      * Categoría a la que pertenece la maquinaria.
      */
     @ManyToOne
