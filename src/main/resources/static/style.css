@@ -192,3 +192,36 @@ body {
   padding: 16px;
   color: #b9770e;
 }
+
+.machinery-detail-content {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.machinery-image {
+  flex: 0 0 50%;
+  max-width: 600px;
+}
+
+.machinery-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.machinery-text {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .machinery-detail-content {
+    flex-direction: column;
+  }
+
+  .machinery-image {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
