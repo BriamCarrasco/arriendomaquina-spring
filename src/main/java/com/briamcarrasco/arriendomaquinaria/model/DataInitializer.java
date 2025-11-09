@@ -116,6 +116,7 @@ public class DataInitializer implements CommandLineRunner {
                m.setPricePerDay(new BigDecimal("150.00"));
                m.setCategory(tractores);
                m.setMachineryInfo(info);
+               m.setImageUrl("/images/john_deere_5075e.png");
                machineryRepository.save(m);
           }
           if (!machineryRepository.existsByNameMachinery("Case IH Axial-Flow 7150 Combine")) {
@@ -127,6 +128,7 @@ public class DataInitializer implements CommandLineRunner {
                m.setPricePerDay(new BigDecimal("350.00"));
                m.setCategory(cosechadoras);
                m.setMachineryInfo(info);
+               m.setImageUrl("/images/Case_IH_Axial-Flow.png");
                machineryRepository.save(m);
           }
           if (!machineryRepository.existsByNameMachinery("New Holland CR8.90 Combine")) {
@@ -138,6 +140,7 @@ public class DataInitializer implements CommandLineRunner {
                m.setPricePerDay(new BigDecimal("400.00"));
                m.setCategory(cosechadoras);
                m.setMachineryInfo(info);
+               m.setImageUrl("/images/new_holland_cr890.png");
                machineryRepository.save(m);
           }
 
