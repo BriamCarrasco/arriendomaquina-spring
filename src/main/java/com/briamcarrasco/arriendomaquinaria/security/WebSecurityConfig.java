@@ -50,7 +50,9 @@ public class WebSecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf
-                                                .csrfTokenRepository(cookieCsrfTokenRepository()))
+                                                .csrfTokenRepository(cookieCsrfTokenRepository())
+                                                .ignoringRequestMatchers("/logout") 
+                                )
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/landing", "/login", "/auth/login",

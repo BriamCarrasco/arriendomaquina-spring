@@ -13,12 +13,19 @@
         <span sec:authorize="isAuthenticated()" th:inline="text">
           Hola <span class="user-name" sec:authentication="name"></span> 👋
         </span>
-        <a
+        <form
+          th:action="@{/logout}"
+          method="post"
           sec:authorize="isAuthenticated()"
-          th:href="@{/logout}"
-          class="btn btn-outline"
-          >Cerrar sesión</a
+          style="display: inline"
         >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+        </form>
         <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
           >Iniciar sesión</a
         >
