@@ -1,73 +1,80 @@
-<form
-  th:action="@{/api/machinery/search}"
-  method="get"
-  style="margin-bottom: 16px"
->
-  <label>
-    <input
-      type="radio"
-      name="tipo"
-      value="nombre"
-      checked
-      onclick="toggleSearch('nombre')"
-    />
-    Buscar por nombre
-  </label>
-  <label>
-    <input
-      type="radio"
-      name="tipo"
-      value="categoria"
-      onclick="toggleSearch('categoria')"
-    />
-    Buscar por categoría
-  </label>
-  <br />
-  <input
-    type="text"
-    id="nameInput"
-    name="name"
-    placeholder="Nombre de maquinaria"
-  />
-  <input
-    type="text"
-    id="categoryInput"
-    name="category"
-    placeholder="Categoría"
-    disabled
-  />
-  <button type="submit" class="btn">Buscar</button>
-</form>
-<script>
-  function toggleSearch(tipo) {
-    document.getElementById("nameInput").disabled = tipo !== "nombre";
-    document.getElementById("categoryInput").disabled = tipo !== "categoria";
-  }
-</script>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Buscar Maquinaria</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- App styles -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="navbar-app">
+      <h2>🌾 Arriendo de Maquinaria</h2>
+      <div class="right">
+        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+      </div>
+    </nav>
 
-<div th:if="${maquinarias != null}">
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Categoría</th>
-      <th>Estado</th>
-      <th>Precio por día</th>
-      <th>Acciones</th>
-    </tr>
-    <tr th:each="maq : ${maquinarias}">
-      <td th:text="${maq.id}"></td>
-      <td th:text="${maq.nameMachinery}"></td>
-      <td
-        th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}"
-      ></td>
-      <td th:text="${maq.status}"></td>
-      <td
-        th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}"
-      ></td>
-      <td>
-        <a th:href="@{/machinerydetail(id=${maq.id})}" class="btn">Ver más información</a>
-      </td>
-    </tr>
-  </table>
-</div>
+    <main class="container-app">
+      <section class="section-title">
+        <h1>Buscar Maquinaria</h1>
+      </section>
+
+      <form th:action="@{/api/machinery/search}" method="get" class="mb-4">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label d-block">Tipo de búsqueda</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="tipo" id="tipoNombre" value="nombre" checked onclick="toggleSearch('nombre')">
+              <label class="form-check-label" for="tipoNombre">Por nombre</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="tipo" id="tipoCategoria" value="categoria" onclick="toggleSearch('categoria')">
+              <label class="form-check-label" for="tipoCategoria">Por categoría</label>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label for="nameInput" class="form-label">Nombre</label>
+            <input type="text" id="nameInput" name="name" class="form-control" placeholder="Nombre de maquinaria">
+          </div>
+
+          <div class="col-md-3">
+            <label for="categoryInput" class="form-label">Categoría</label>
+            <input type="text" id="categoryInput" name="category" class="form-control" placeholder="Categoría" disabled>
+          </div>
+
+          <div class="col-md-1 text-end">
+            <button type="submit" class="btn">Buscar</button>
+          </div>
+        </div>
+      </form>
+
+      <div th:if="${maquinarias != null}">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+          <div class="col" th:each="maq : ${maquinarias}">
+            <div class="card h-100">
+              <div th:if="${maq.imageUrl != null}" class="machinery-image">
+                <img th:src="${maq.imageUrl}" th:alt="${maq.nameMachinery}" class="card-img-top" />
+              </div>
+              <div class="card-body">
+                <h5 class="card-title" th:text="${maq.nameMachinery}">Nombre</h5>
+                <p class="card-text text-muted" th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}">Categoría</p>
+                <p class="card-text"><span class="badge badge-info" th:text="${maq.status}">Estado</span></p>
+                <p class="card-text fw-semibold">Precio por día: <span th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}">$0.00</span></p>
+                <a th:href="@{/machinerydetail(id=${maq.id})}" class="btn btn-outline-primary">Ver más información</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App JavaScript - Eliminación de código inline para cumplir con CSP -->
+    <script src="/js/app.js"></script>
+  </body>
+</html>

@@ -22,21 +22,22 @@
     </div>
 
     <main class="container-app">
-      <section class="hero" style="text-align: center; margin: 48px 0">
+      <section class="hero">
         <h1>Arrienda y gestiona maquinaria agrícola</h1>
         <p>
           Explora equipos, publica los tuyos y controla tus operaciones de forma
           segura.
         </p>
 
-        <div style="margin-top: 20px">
+        <div class="hero-buttons">
           <a th:href="@{/login}" class="btn">Comenzar</a>
+          <a th:href="@{/search}" class="btn btn-spacing">Buscar Maquinaria</a>
         </div>
       </section>
 
       <section class="features card-grid">
         <div class="card">
-          <h4>🔍 Buscar</h4>
+          <h4><a th:href="@{/search}" class="card-link">🔍 Buscar</a></h4>
           <p>Encuentra maquinaria por nombre, categoría o estado.</p>
         </div>
         <div class="card">
