@@ -6,6 +6,7 @@ import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,8 @@ public class AdminMachineryController {
             @RequestParam("nameMachinery") String nameMachinery,
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("status") String status,
-            @RequestParam("pricePerDay") BigDecimal pricePerDay) {
+        @RequestParam("pricePerDay") BigDecimal pricePerDay,
+        @RequestParam(name = "imageUrl", required = false) String imageUrl) {
 
         Machinery machinery = new Machinery();
         machinery.setNameMachinery(nameMachinery);
@@ -50,6 +52,14 @@ public class AdminMachineryController {
         Category category = new Category();
         category.setId(categoryId);
         machinery.setCategory(category);
+
+        // Manejar imagen: usar imagen por defecto si no se proporciona
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            // Usar una imagen existente como placeholder
+            machinery.setImageUrl("/images/Case_IH_Axial-Flow.png");
+        } else {
+            machinery.setImageUrl(imageUrl.trim());
+        }
 
         machineryService.createMachinery(machinery);
         return "redirect:/home";
@@ -110,6 +120,7 @@ public class AdminMachineryController {
     /**
      * Busca maquinarias por nombre o categoría y muestra el resultado en la vista
      * de búsqueda.
+     * Se aplica sanitización de entradas para prevenir ataques XSS.
      *
      * @param name     nombre de la maquinaria (opcional)
      * @param category nombre de la categoría (opcional)
@@ -123,11 +134,16 @@ public class AdminMachineryController {
             @RequestParam String tipo,
             Model model) {
         List<Machinery> maquinarias = List.of();
+        
+        // Sanitización de entradas para prevenir XSS (OWASP Top 10 - A03:2021 Injection)
         if ("nombre".equals(tipo) && name != null && !name.isEmpty()) {
-            maquinarias = machineryService.findByNameMachinery(name);
+            String safeName = HtmlUtils.htmlEscape(name);
+            maquinarias = machineryService.findByNameMachinery(safeName);
         } else if ("categoria".equals(tipo) && category != null && !category.isEmpty()) {
-            maquinarias = machineryService.findByCategory(category);
+            String safeCategory = HtmlUtils.htmlEscape(category);
+            maquinarias = machineryService.findByCategory(safeCategory);
         }
+        
         model.addAttribute("maquinarias", maquinarias);
         return "search";
     }
