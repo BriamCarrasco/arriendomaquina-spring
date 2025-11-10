@@ -1,10 +1,7 @@
-// Función para alternar entre búsqueda por nombre o categoría
 function toggleSearch(tipo) {
     document.getElementById('nameInput').disabled = tipo !== 'nombre';
     document.getElementById('categoryInput').disabled = tipo !== 'categoria';
 }
-
-// Validación de formularios Bootstrap
 (function () {
     'use strict'
     var forms = document.querySelectorAll('.needs-validation')

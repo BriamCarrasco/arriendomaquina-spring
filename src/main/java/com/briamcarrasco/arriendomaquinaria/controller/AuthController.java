@@ -61,6 +61,9 @@ public class AuthController {
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(cookie);
+            response.setHeader("Set-Cookie",
+                    String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict", cookie.getValue(),
+                            cookie.getMaxAge()));
             return "redirect:/home";
         } catch (Exception e) {
             e.printStackTrace();

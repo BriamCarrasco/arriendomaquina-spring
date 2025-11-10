@@ -6,7 +6,9 @@ import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.HtmlUtils;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import org.springframework.validation.annotation.Validated;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.util.Optional;
  */
 @Controller
 @RequestMapping("/api/machinery")
+@Validated
 public class AdminMachineryController {
 
     @Autowired
@@ -41,8 +44,8 @@ public class AdminMachineryController {
             @RequestParam("nameMachinery") String nameMachinery,
             @RequestParam("categoryId") Long categoryId,
             @RequestParam("status") String status,
-        @RequestParam("pricePerDay") BigDecimal pricePerDay,
-        @RequestParam(name = "imageUrl", required = false) String imageUrl) {
+            @RequestParam("pricePerDay") BigDecimal pricePerDay,
+            @RequestParam(name = "imageUrl", required = false) String imageUrl) {
 
         Machinery machinery = new Machinery();
         machinery.setNameMachinery(nameMachinery);
@@ -128,22 +131,30 @@ public class AdminMachineryController {
      * @param model    modelo para la vista
      * @return nombre de la vista de búsqueda
      */
+    /**
+     * Tipos permitidos de búsqueda.
+     */
+    public enum TipoBusqueda {
+        nombre, categoria
+    }
+
     @GetMapping("/search")
-    public String buscarMaquinaria(@RequestParam(required = false) String name,
-            @RequestParam(required = false) String category,
-            @RequestParam String tipo,
+    public String buscarMaquinaria(
+            @RequestParam(required = false) @Size(max = 50, message = "El nombre no debe superar 50 caracteres") @Pattern(regexp = "[\\p{L}\\p{N} .-]*", message = "Nombre contiene caracteres no permitidos") String name,
+            @RequestParam(required = false) @Size(max = 50, message = "La categoría no debe superar 50 caracteres") @Pattern(regexp = "[\\p{L}\\p{N} .-]*", message = "Categoría contiene caracteres no permitidos") String category,
+            @RequestParam TipoBusqueda tipo,
             Model model) {
         List<Machinery> maquinarias = List.of();
-        
-        // Sanitización de entradas para prevenir XSS (OWASP Top 10 - A03:2021 Injection)
-        if ("nombre".equals(tipo) && name != null && !name.isEmpty()) {
-            String safeName = HtmlUtils.htmlEscape(name);
-            maquinarias = machineryService.findByNameMachinery(safeName);
-        } else if ("categoria".equals(tipo) && category != null && !category.isEmpty()) {
-            String safeCategory = HtmlUtils.htmlEscape(category);
-            maquinarias = machineryService.findByCategory(safeCategory);
+
+        String trimmedName = name == null ? null : name.trim();
+        String trimmedCategory = category == null ? null : category.trim();
+
+        if (tipo == TipoBusqueda.nombre && trimmedName != null && !trimmedName.isEmpty()) {
+            maquinarias = machineryService.findByNameMachinery(trimmedName);
+        } else if (tipo == TipoBusqueda.categoria && trimmedCategory != null && !trimmedCategory.isEmpty()) {
+            maquinarias = machineryService.findByCategory(trimmedCategory);
         }
-        
+
         model.addAttribute("maquinarias", maquinarias);
         return "search";
     }
