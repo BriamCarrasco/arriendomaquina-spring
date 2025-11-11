@@ -1,69 +1,83 @@
 # Arriendo de Maquinaria · Spring Boot + Spring Security
 
-Pequeña app demo con **Spring Boot**, **Thymeleaf** y **Spring Security** para mostrar autenticación, vistas públicas/privadas y manejo de errores.
+Aplicación web demo con **Spring Boot**, **Thymeleaf**, **Spring Security** y **JWT** para el alquiler de maquinaria agrícola. Incluye autenticación, gestión de inventario, alquileres, y correcciones de seguridad basadas en OWASP Top 10.
 
 > Ramo: **Seguridad y Calidad en el Desarrollo de Software**  
 ---
 
 ## ✨ Funcionalidades actuales
 
-- **Landing pública**: `GET /landing`
-- **Login** (formulario Spring Security): `GET /login`
-- **Home privado** (requiere sesión): `GET /home`
-- **Logout**: `POST /logout` (enlace con `th:href="@{/logout}"`)
-- **Errores personalizados**:
-  - `403` Acceso denegado → `templates/error/403.html` *(queda lista; se mostrará cuando exista al menos una ruta con restricción de rol)*  
-  - `404` No encontrado → `templates/error/404.html`
-  - `error` genérico → `templates/error/error.html`
+- **Páginas Públicas**:
+  - Landing: `GET /landing` – Pantalla de bienvenida con características.
+  - Búsqueda: `GET /search` – Navegar maquinaria por nombre/categoría.
+  - Detalles de Maquinaria: `GET /machinerydetail?id=X` – Ver especificaciones, imágenes y estado.
 
+- **Autenticación**:
+  - Login: `GET /login` – Formulario con JWT.
+  - Logout: `POST /logout` – Limpia sesión.
+
+- **Páginas Privadas** (requiere login):
+  - Home: `GET /home` – Dashboard con nombre de usuario y acciones rápidas (buscar, publicar, panel admin).
+  - Publicar Maquinaria: `GET /postmachinery` – Formulario para agregar equipo nuevo con categorías/estados.
+  - API Admin de Maquinaria: `GET /api/machinery` – Operaciones CRUD para admins (listar, agregar, editar, eliminar).
+
+- **Inicialización de Datos**: Al iniciar, se siembran usuarios (admin, user1, user2), categorías (Tractores, Cosechadoras), estados (disponible, arrendada) y maquinaria/alquileres de muestra.
+
+- **Tecnologías**: Spring Boot, Thymeleaf, Spring Security, JWT, MySQL, Bootstrap (autoalojado).
 
 ---
 
 ## 🔐 Seguridad
 
-- **Autenticación** por formulario (`/login`) y redirección por defecto a `/home`.
-- **Usuarios en memoria** (para pruebas), con contraseñas **BCrypt**:
-  | Usuario | Contraseña       | Roles           |
-  |--------:|------------------|-----------------|
-  | `user`  | `userpassword`   | `USER`          |
-  | `owner` | `ownerpassword`  | `OWNER`         |
-  | `admin` | `adminpassword`  | `USER`, `ADMIN` |
+- **Autenticación**: Formulario (`/login`) con JWT stateless. Redirección por defecto a `/home`.
+- **Usuarios en Base de Datos** (MySQL), con contraseñas **BCrypt**:
+  | Usuario | Contraseña | Roles           |
+  |--------:|------------|-----------------|
+  | `admin` | `password` | `ADMIN`         |
+  | `user1` | `password` | `USER`          |
+  | `user2` | `password` | `USER`          |
 
 - **Autorización**:
-  - `landing`, `login` y estáticos son públicos.
-  - `home` requiere sesión.
-  - Páginas de error (`/403`, `/error/**`) son públicas.
-  - (Preparado) Reglas por rol para usar más adelante:
-    ```java
-    .requestMatchers("/admin/**").hasRole("ADMIN")
-    .requestMatchers("/owner/**").hasAnyRole("OWNER","ADMIN")
-    ```
-    > Estas rutas **no existen aún**.
+  - Páginas públicas: `landing`, `search`, `machinerydetail`, estáticos, errores.
+  - Privadas: `home`, `postmachinery`, `/api/machinery` (requiere `ADMIN`).
+  - Protección CSRF con cookies SameSite=Strict.
+  - Content Security Policy (CSP) estricta para prevenir XSS.
 
-- **Autorización en vistas** (Thymeleaf Security): se usan `sec:authorize` en los botones/menús del `home` para mostrar/ocultar acciones según sesión/rol (p. ej. login vs. logout, mensajes al usuario autenticado, etc.).
+- **Correcciones OWASP Top 10** (escaneadas con ZAP Proxy):
+  1. **CSP: Directiva Wildcard (A05)**: Política estricta sin comodines.
+  2. **Cookie sin HttpOnly (A05)**: Cookies JWT con HttpOnly=true.
+  3. **Cookie sin SameSite (A01)**: Atributo SameSite=Strict agregado.
+  4. **Inclusión de JS entre Dominios (A08)**: Recursos autoalojados, sin externos.
+
+- **Autorización en Vistas**: Usando `sec:authorize` en Thymeleaf para mostrar/ocultar elementos según rol.
 
 ---
 
 ## 🗺️ Rutas implementadas
 
 - **Públicas**
-  - `GET /landing`  
-  - `GET /login`  
-  - Estáticos: `/style.css`, `/css/**`, `/js/**`, `/images/**`, `/webjars/**`  
-  - Errores: `/403`, `/error/**` (servicio de plantillas de error)
+  - `GET /landing`
+  - `GET /search`
+  - `GET /machinerydetail?id=X`
+  - `GET /login`
+  - Estáticos: `/style.css`, `/css/**`, `/js/**`, `/images/**`, `/webjars/**`
+  - Errores: `/403`, `/404`, `/error/**`
 
 - **Privadas**
   - `GET /home` (requiere autenticación)
+  - `GET /postmachinery` (requiere autenticación)
+  - `GET /api/machinery` (requiere `ADMIN`)
 
 ---
 
 ## ▶️ Cómo ejecutar
 
 Requisitos:
-- **Java 21** 
+- **Java 21**
 - **Maven 4.0.0**
+- **MySQL** (configurado en `application.properties`)
 
-Pasos:
+### Opción 1: Ejecutar manualmente
 ```bash
 # Ejecutar
 mvn spring-boot:run
@@ -72,14 +86,24 @@ mvn spring-boot:run
 http://localhost:8080
 ```
 
+### Opción 2: Usar script de variables de entorno (más fácil)
+Para configurar automáticamente las variables de entorno (JWT_SECRET_KEY, DB_URL, DB_USER, DB_PASS, SERVER_PORT=8084) y ejecutar:
+```powershell
+# Ejecutar el script PowerShell
+.\variablesentorno.ps1
+
+# Navegar
+http://localhost:8084
+```
+
 Login de prueba con cualquiera de los usuarios listados arriba.
 
 ---
 
 ## ⚠️ Errores personalizados
 
-- **404**: prueba escribiendo una ruta inexistente, por ejemplo `/no-existe`.
-- **403**: la plantilla ya está lista. Pero aún no tenemos desarrolladas paginas restringidas. Puedes **mostrar la página** visitando `/403`, pero **no será un “access denied” real** hasta que exista una ruta protegida que dispare la excepción.
-
+- **404**: Prueba rutas inexistentes, ej. `/no-existe`.
+- **403**: Plantilla lista; visita `/403` para ver, o se dispara en rutas protegidas.
+- **Error genérico**: `/error`.
 
 ---
