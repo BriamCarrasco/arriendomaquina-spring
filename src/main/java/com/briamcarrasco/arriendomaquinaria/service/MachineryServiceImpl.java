@@ -2,7 +2,6 @@ package com.briamcarrasco.arriendomaquinaria.service;
 
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +15,12 @@ import java.util.Optional;
 @Service
 public class MachineryServiceImpl implements MachineryService {
 
-    @Autowired
-    private MachineryRepository machineryRepository;
+    
+    private final MachineryRepository machineryRepository;
+
+    public MachineryServiceImpl(MachineryRepository machineryRepository) {
+        this.machineryRepository = machineryRepository;
+    }
 
     /**
      * Crea una nueva maquinaria en el sistema.
@@ -47,7 +50,7 @@ public class MachineryServiceImpl implements MachineryService {
      * @param id        identificador de la maquinaria a actualizar
      * @param machinery datos actualizados de la maquinaria
      * @return la maquinaria actualizada
-     * @throws RuntimeException si la maquinaria no existe
+     * @throws MachineryNotFoundException si la maquinaria no existe
      */
     @Override
     public Machinery updateMachinery(Long id, Machinery machinery) {
@@ -60,7 +63,7 @@ public class MachineryServiceImpl implements MachineryService {
             m.setPricePerDay(machinery.getPricePerDay());
             return machineryRepository.save(m);
         }
-        throw new RuntimeException("Machinery not found");
+        throw new MachineryNotFoundException("Machinery not found with id: " + id);
     }
 
     /**
@@ -103,5 +106,11 @@ public class MachineryServiceImpl implements MachineryService {
     @Override
     public List<Machinery> findByCategory(String name) {
         return machineryRepository.findByCategory_NameIgnoreCase(name);
+    }
+
+    class MachineryNotFoundException extends RuntimeException {
+        public MachineryNotFoundException(String message) {
+            super(message);
+        }
     }
 }

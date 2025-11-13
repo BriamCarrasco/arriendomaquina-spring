@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html
+  lang="es"
+  xml:lang="es"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="https://www.thymeleaf.org"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,25 +28,46 @@
       <form th:action="@{/api/machinery/search}" method="get" class="mb-4">
         <div class="row g-2 align-items-end">
           <div class="col-md-4">
-            <label class="form-label d-block">Tipo de búsqueda</label>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="tipo" id="tipoNombre" value="nombre" checked onclick="toggleSearch('nombre')">
-              <label class="form-check-label" for="tipoNombre">Por nombre</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="tipo" id="tipoCategoria" value="categoria" onclick="toggleSearch('categoria')">
-              <label class="form-check-label" for="tipoCategoria">Por categoría</label>
-            </div>
+            <fieldset>
+              <legend id="tipoBusquedaLabel" class="form-label d-block">Tipo de búsqueda</legend>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="tipo"
+                  id="tipoNombre"
+                  value="nombre"
+                  checked
+                  onclick="toggleSearch('nombre')"
+                  onkeydown="if(event.key==='Enter'||event.key===' '){toggleSearch('nombre');}"
+                  aria-labelledby="tipoBusquedaLabel tipoNombreLabel"
+                >
+                <label class="form-check-label" for="tipoNombre" id="tipoNombreLabel">Por nombre</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="tipo"
+                  id="tipoCategoria"
+                  value="categoria"
+                  onclick="toggleSearch('categoria')"
+                  onkeydown="if(event.key==='Enter'||event.key===' '){toggleSearch('categoria');}"
+                  aria-labelledby="tipoBusquedaLabel tipoCategoriaLabel"
+                >
+                <label class="form-check-label" for="tipoCategoria" id="tipoCategoriaLabel">Por categoría</label>
+              </div>
+            </fieldset>
           </div>
 
           <div class="col-md-4">
-            <label for="nameInput" class="form-label">Nombre</label>
-            <input type="text" id="nameInput" name="name" class="form-control" placeholder="Nombre de maquinaria">
+            <label for="nameInput" class="form-label" id="nameInputLabel">Nombre</label>
+            <input type="text" id="nameInput" name="name" class="form-control" placeholder="Nombre de maquinaria" aria-labelledby="nameInputLabel">
           </div>
 
           <div class="col-md-3">
-            <label for="categoryInput" class="form-label">Categoría</label>
-            <input type="text" id="categoryInput" name="category" class="form-control" placeholder="Categoría" disabled>
+            <label for="categoryInput" class="form-label" id="categoryInputLabel">Categoría</label>
+            <input type="text" id="categoryInput" name="category" class="form-control" placeholder="Categoría" disabled aria-labelledby="categoryInputLabel">
           </div>
 
           <div class="col-md-1 text-end">

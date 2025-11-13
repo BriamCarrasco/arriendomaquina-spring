@@ -1,6 +1,5 @@
 package com.briamcarrasco.arriendomaquinaria.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +17,11 @@ import java.util.Map;
 @RequestMapping("/api/register-test")
 public class RegisterTestController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public RegisterTestController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Registra un nuevo usuario en el sistema.
@@ -30,7 +32,7 @@ public class RegisterTestController {
      * @return respuesta HTTP con el resultado del registro
      */
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
+    public ResponseEntity<String> registerUser(@RequestBody Map<String, String> request) {
         try {
             String username = request.get("username");
             String password = request.get("password");

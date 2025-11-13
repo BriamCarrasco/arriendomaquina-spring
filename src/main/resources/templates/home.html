@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html
+  lang="es"
+  xml:lang="es"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="https://www.thymeleaf.org"
+>
   <head>
     <meta charset="UTF-8" />
     <title>Inicio | Arriendo de Maquinaria</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
-
   <body>
-    <nav class="navbar-app">
-      <h2>🌾 Arriendo de Maquinaria</h2>
+    <nav class="navbar-app" aria-label="Navegación principal">
+      <h2 id="app-title">🌾 Arriendo de Maquinaria</h2>
       <div class="right">
         <span sec:authorize="isAuthenticated()" th:inline="text">
           Hola <span class="user-name" sec:authentication="name"></span> 👋
@@ -33,20 +37,22 @@
     </nav>
 
     <main class="container-app">
-      <h1 th:text="|Bienvenido a ${name}!|"></h1>
-      <h2>Plataforma segura con Spring Security</h2>
+      <h1 id="bienvenida" th:text="|Bienvenido a ${name}!|">
+        Bienvenido a la plataforma
+      </h1>
+      <h2 id="seguridad">Plataforma segura con Spring Security</h2>
 
       <!-- 🔒 Contenido visible solo si está autenticado -->
       <div sec:authorize="isAuthenticated()">
         <div class="section-title">
           <span class="badge badge-info">Inicio</span>
-          <strong>Acciones rápidas</strong>
+          <strong id="acciones-rapidas">Acciones rápidas</strong>
         </div>
 
         <div class="card-grid">
           <!-- Buscar maquinaria -->
           <div class="card">
-            <h4>Buscar maquinaria</h4>
+            <h4 id="buscar-maquinaria">Buscar maquinaria</h4>
             <p>Explora equipos disponibles por nombre, categoría o estado.</p>
             <div class="actions">
               <a th:href="@{/search}" class="btn">Ir a búsqueda</a>
@@ -55,7 +61,7 @@
 
           <!-- Publicar maquinaria -->
           <div class="card">
-            <h4>Publicar maquinaria</h4>
+            <h4 id="publicar-maquinaria">Publicar maquinaria</h4>
             <p>
               Sube tus propios equipos para arriendo y gestiona su
               disponibilidad.
@@ -71,6 +77,7 @@
                 class="btn btn-disabled"
                 disabled
                 sec:authorize="!hasAnyRole('OWNER','ADMIN')"
+                aria-disabled="true"
               >
                 Solo propietarios
               </button>
@@ -79,7 +86,7 @@
 
           <!-- Panel de administración -->
           <div class="card">
-            <h4>Panel de administración</h4>
+            <h4 id="panel-admin">Panel de administración</h4>
             <p>Gestiona usuarios, auditorías y estados de publicación.</p>
             <div class="actions">
               <a
@@ -96,7 +103,7 @@
 
           <!-- Resumen -->
           <div class="card">
-            <h4>Resumen</h4>
+            <h4 id="resumen">Resumen</h4>
             <p>Consulta el estado general de tus operaciones.</p>
             <div class="actions">
               <span class="badge badge-success">Activo</span>
@@ -105,12 +112,17 @@
 
           <!-- Reportes -->
           <div class="card">
-            <h4>Reportes</h4>
+            <h4 id="reportes">Reportes</h4>
             <p>Genera reportes operativos (próximamente).</p>
             <div class="actions">
-              <a href="#" class="btn btn-outline" onclick="return false;"
-                >Ver ejemplo</a
+              <button
+                type="button"
+                class="btn btn-outline"
+                onclick="return false;"
+                aria-disabled="true"
               >
+                Ver ejemplo
+              </button>
             </div>
           </div>
         </div>
@@ -118,18 +130,18 @@
         <!-- 🧱 Nueva sección: listado de maquinarias -->
         <div class="section-title section-spacing">
           <span class="badge badge-info">Inventario</span>
-          <strong>Maquinaria disponible</strong>
+          <strong id="maquinaria-disponible">Maquinaria disponible</strong>
         </div>
 
         <div th:if="${maquinarias != null and #lists.size(maquinarias) > 0}">
-          <table class="table" border="1" cellspacing="0" cellpadding="6">
+          <table class="table" border="1" aria-label="Listado de maquinarias">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Estado</th>
-                <th>Precio día</th>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Precio día</th>
               </tr>
             </thead>
             <tbody>
@@ -152,12 +164,11 @@
           No hay maquinarias registradas actualmente.
         </p>
       </div>
-
       <!-- 🚫 Invitación para usuarios anónimos -->
       <div sec:authorize="isAnonymous()">
         <div class="section-title">
           <span class="badge badge-info">Acceso</span>
-          <strong>Zona privada</strong>
+          <strong id="zona-privada">Zona privada</strong>
         </div>
         <p>Inicia sesión para acceder a las funciones de la plataforma.</p>
         <a th:href="@{/login}" class="btn">Iniciar sesión</a>

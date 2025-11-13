@@ -67,7 +67,7 @@ public class User implements UserDetails {
      * Información adicional asociada al usuario.
      */
     @OneToOne(mappedBy = "user")
-    private UserInfo userInfo;
+    private transient UserInfo userInfo;
 
     /**
      * Enum que define los roles posibles de usuario.

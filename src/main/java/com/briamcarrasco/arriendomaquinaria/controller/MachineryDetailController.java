@@ -2,7 +2,6 @@ package com.briamcarrasco.arriendomaquinaria.controller;
 
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class MachineryDetailController {
 
-    @Autowired
-    private MachineryService machineryService;
+    private final MachineryService machineryService;
+
+    public MachineryDetailController(MachineryService machineryService) {
+        this.machineryService = machineryService;
+    }
 
     /**
      * Muestra la página de detalle de una maquinaria específica.

@@ -36,6 +36,8 @@ public class Status {
      * Constructor por defecto.
      */
     public Status() {
+        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
+        // entidades.
     }
 
 }

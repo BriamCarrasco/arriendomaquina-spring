@@ -3,7 +3,6 @@ package com.briamcarrasco.arriendomaquinaria.controller;
 import com.briamcarrasco.arriendomaquinaria.model.Category;
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.Pattern;
@@ -27,8 +26,11 @@ import java.util.Optional;
 @Validated
 public class AdminMachineryController {
 
-    @Autowired
-    private MachineryService machineryService;
+    private final MachineryService machineryService;
+
+    public AdminMachineryController(MachineryService machineryService) {
+        this.machineryService = machineryService;
+    }
 
     /**
      * Crea una nueva maquinaria en el sistema.
@@ -135,23 +137,29 @@ public class AdminMachineryController {
      * Tipos permitidos de búsqueda.
      */
     public enum TipoBusqueda {
-        nombre, categoria
+        NOMBRE, CATEGORIA;
+
+        public static TipoBusqueda from(String value) {
+            return TipoBusqueda.valueOf(value.trim().toUpperCase());
+        }
     }
 
     @GetMapping("/search")
     public String buscarMaquinaria(
             @RequestParam(required = false) @Size(max = 50, message = "El nombre no debe superar 50 caracteres") @Pattern(regexp = "[\\p{L}\\p{N} .-]*", message = "Nombre contiene caracteres no permitidos") String name,
             @RequestParam(required = false) @Size(max = 50, message = "La categoría no debe superar 50 caracteres") @Pattern(regexp = "[\\p{L}\\p{N} .-]*", message = "Categoría contiene caracteres no permitidos") String category,
-            @RequestParam TipoBusqueda tipo,
+            @RequestParam String tipo,
             Model model) {
         List<Machinery> maquinarias = List.of();
 
         String trimmedName = name == null ? null : name.trim();
         String trimmedCategory = category == null ? null : category.trim();
 
-        if (tipo == TipoBusqueda.nombre && trimmedName != null && !trimmedName.isEmpty()) {
+        TipoBusqueda tipoBusqueda = TipoBusqueda.from(tipo);
+
+        if (tipoBusqueda == TipoBusqueda.NOMBRE && trimmedName != null && !trimmedName.isEmpty()) {
             maquinarias = machineryService.findByNameMachinery(trimmedName);
-        } else if (tipo == TipoBusqueda.categoria && trimmedCategory != null && !trimmedCategory.isEmpty()) {
+        } else if (tipoBusqueda == TipoBusqueda.CATEGORIA && trimmedCategory != null && !trimmedCategory.isEmpty()) {
             maquinarias = machineryService.findByCategory(trimmedCategory);
         }
 

@@ -2,7 +2,6 @@ package com.briamcarrasco.arriendomaquinaria.service;
 
 import com.briamcarrasco.arriendomaquinaria.model.User;
 import com.briamcarrasco.arriendomaquinaria.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public MyUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     /**
      * Carga los detalles de un usuario por su nombre de usuario.

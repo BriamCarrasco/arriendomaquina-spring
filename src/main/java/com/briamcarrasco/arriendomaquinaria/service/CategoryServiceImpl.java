@@ -1,7 +1,6 @@
 package com.briamcarrasco.arriendomaquinaria.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.briamcarrasco.arriendomaquinaria.model.Category;
 import com.briamcarrasco.arriendomaquinaria.repository.CategoryRepository;
@@ -15,8 +14,11 @@ import com.briamcarrasco.arriendomaquinaria.repository.CategoryRepository;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     /**
      * Obtiene todas las categorías registradas en el sistema.

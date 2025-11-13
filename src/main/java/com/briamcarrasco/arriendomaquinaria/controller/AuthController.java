@@ -1,6 +1,5 @@
 package com.briamcarrasco.arriendomaquinaria.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -22,14 +21,18 @@ import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_BEARER_PR
 @Controller
 public class AuthController {
 
-    @Autowired
-    private JWTAuthtenticationConfig jwtAuthtenticationConfig;
+    private final JWTAuthtenticationConfig jwtAuthtenticationConfig;
+    private final MyUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public AuthController(
+            JWTAuthtenticationConfig jwtAuthtenticationConfig,
+            MyUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        this.jwtAuthtenticationConfig = jwtAuthtenticationConfig;
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Procesa la solicitud de inicio de sesión.

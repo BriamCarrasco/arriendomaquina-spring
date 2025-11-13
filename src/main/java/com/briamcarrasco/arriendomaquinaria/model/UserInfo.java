@@ -76,6 +76,8 @@ public class UserInfo {
      * Constructor por defecto.
      */
     public UserInfo() {
+        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
+        // entidades.
     }
 
     /*

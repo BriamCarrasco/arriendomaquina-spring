@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.Authentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controlador para la gestión de la página principal y la navegación inicial
@@ -15,6 +17,7 @@ import org.springframework.security.core.Authentication;
 @Controller
 public class HomeController {
 
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
     private final MachineryRepository repo;
 
     /**
@@ -51,7 +54,7 @@ public class HomeController {
      */
     @GetMapping("/home")
     public String home(Authentication authentication, Model model) {
-        System.out.println("Authentication in /home: " + authentication);
+        logger.info("Authentication in /home: {}", authentication);
         model.addAttribute("name", authentication != null ? authentication.getName() : "Invitado");
         model.addAttribute("maquinarias", repo.findAll());
         return "home";

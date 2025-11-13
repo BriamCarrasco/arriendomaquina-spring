@@ -1,6 +1,5 @@
 package com.briamcarrasco.arriendomaquinaria.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.briamcarrasco.arriendomaquinaria.repository.StatusRepository;
 import com.briamcarrasco.arriendomaquinaria.model.Status;
@@ -15,8 +14,12 @@ import java.util.List;
 @Service
 public class StatusServiceImpl implements StatusService {
 
-    @Autowired
-    private StatusRepository statusRepository;
+    
+    private final StatusRepository statusRepository;
+
+    public StatusServiceImpl(StatusRepository statusRepository) {
+        this.statusRepository = statusRepository;
+    }
 
     /**
      * Obtiene todos los estados registrados en el sistema.

@@ -45,6 +45,8 @@ public class MachineryInfo {
      * Constructor por defecto.
      */
     public MachineryInfo() {
+        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
+        // entidades.
     }
 
 }

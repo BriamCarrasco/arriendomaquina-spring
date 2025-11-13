@@ -1,6 +1,5 @@
 package com.briamcarrasco.arriendomaquinaria.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +14,16 @@ import com.briamcarrasco.arriendomaquinaria.service.StatusService;
 @Controller
 public class PostMachineryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @Autowired
-    private StatusService statusService;
+    private final StatusService statusService;
+
+    public PostMachineryController(
+            CategoryService categoryService,
+            StatusService statusService) {
+        this.categoryService = categoryService;
+        this.statusService = statusService;
+    }
 
     /**
      * Muestra la página de publicación de maquinaria.

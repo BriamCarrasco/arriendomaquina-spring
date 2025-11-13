@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.crypto.SecretKey;
 import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.*;
 
 /**
@@ -80,7 +78,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      */
     private Claims parseClaims(String rawToken) {
         return Jwts.parser()
-                .verifyWith((SecretKey) getSigningKey(SUPER_SECRET_KEY))
+                .verifyWith(getSigningKey(SUPER_SECRET_KEY)) 
                 .build()
                 .parseSignedClaims(rawToken)
                 .getPayload();
@@ -98,7 +96,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 claims.getSubject(),
                 null,
                 authorities.stream().map(Object::toString).map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList()));
+                        .toList());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
@@ -117,15 +115,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = resolveToken(request);
-            System.out.println("Resolved token: " + (token != null ? "present" : "null")); 
             if (token != null) {
                 Claims claims = parseClaims(token);
-                System.out.println("Parsed claims: " + claims); 
                 if (claims.get("authorities") != null) {
                     setAuthentication(claims);
-                    System.out.println("Authentication set for user: " + claims.getSubject()); 
                 } else {
-                    System.out.println("No authorities in claims"); 
                     SecurityContextHolder.clearContext();
                 }
             } else {
@@ -133,7 +127,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
-            System.out.println("JWT exception: " + e.getMessage()); 
             chain.doFilter(request, response);
         }
     }
