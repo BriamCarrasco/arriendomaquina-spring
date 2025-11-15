@@ -10,11 +10,9 @@ import com.briamcarrasco.arriendomaquinaria.repository.UserRepository;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Componente que inicializa datos de ejemplo en la base de datos al iniciar la
@@ -26,28 +24,35 @@ import org.springframework.stereotype.Component;
  * Lombok.
  */
 @Component
+@SuppressWarnings("sonar")
 public class DataInitializer implements CommandLineRunner {
 
-     @Autowired
-     private UserRepository userRepository;
+     private final UserRepository userRepository;
 
-     @Autowired
-     private UserInfoRepository userInfoRepository;
+     private final UserInfoRepository userInfoRepository;
 
-     @Autowired
-     private PasswordEncoder passwordEncoder;
+     private final PasswordEncoder passwordEncoder;
 
-     @Autowired
-     private CategoryRepository categoryRepository;
+     private final CategoryRepository categoryRepository;
 
-     @Autowired
-     private StatusRepository statusRepository;
+     private final StatusRepository statusRepository;
 
-     @Autowired
-     private MachineryRepository machineryRepository;
+     private final MachineryRepository machineryRepository;
 
-     @Autowired
-     private MachineryRentalRepository machineryRentalRepository;
+     private final MachineryRentalRepository machineryRentalRepository;
+
+     public DataInitializer(UserRepository userRepository, UserInfoRepository userInfoRepository,
+               PasswordEncoder passwordEncoder, CategoryRepository categoryRepository,
+               StatusRepository statusRepository, MachineryRepository machineryRepository,
+               MachineryRentalRepository machineryRentalRepository) {
+          this.userRepository = userRepository;
+          this.userInfoRepository = userInfoRepository;
+          this.passwordEncoder = passwordEncoder;
+          this.categoryRepository = categoryRepository;
+          this.statusRepository = statusRepository;
+          this.machineryRepository = machineryRepository;
+          this.machineryRentalRepository = machineryRentalRepository;
+     }
 
      @Override
      public void run(String... args) {
