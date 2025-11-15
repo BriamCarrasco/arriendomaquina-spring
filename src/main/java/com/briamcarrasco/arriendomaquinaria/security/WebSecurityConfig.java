@@ -57,8 +57,9 @@ public class WebSecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/landing", "/login", "/auth/login",
                                                                 "/css/**", "/js/**", "/images/**", "/webjars/**",
-                                                                "/style.css", "/api/machinery/**",
-                                                                "/search", "/search/**", "/bootstrap.min.css", "/bootstrap.bundle.min.js","/favicon.ico")
+                                                                "/style.css", "/api/machinery/**","register",
+                                                                "/search", "/search/**", "/bootstrap.min.css", "/bootstrap.bundle.min.js","/favicon.ico",
+                                                                "/register/user")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers

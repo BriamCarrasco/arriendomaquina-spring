@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro | Arriendo de Maquinaria</title>
+    <link href="/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="register-page">
+    <nav class="navbar-app">
+      <h2>🌾 Arriendo de Maquinaria</h2>
+      <div class="right">
+        <span sec:authorize="isAuthenticated()" th:inline="text">
+          Hola <span class="user-name" sec:authentication="name"></span> 👋
+        </span>
+        <a
+          sec:authorize="isAuthenticated()"
+          th:href="@{/logout}"
+          class="btn btn-outline"
+          >Cerrar sesión</a
+        >
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+          >Iniciar sesión</a
+        >
+      </div>
+    </nav>
+
+    <main class="container-app">
+      <section class="section-title">
+        <h1 class="m-0">Registro de Usuario</h1>
+      </section>
+
+      <div class="form-container">
+        <form
+          th:action="@{/register/user}"
+          th:object="${user}"
+          method="post"
+          class="needs-validation"
+          novalidate
+        >
+          <div
+            th:if="${error}"
+            class="error-message col-12 text-center"
+            th:text="${error}"
+          ></div>
+
+          <div class="col-md-6 mx-auto mb-3">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <input
+              type="text"
+              id="username"
+              th:field="*{username}"
+              class="form-control"
+              required
+            />
+            <div class="invalid-feedback">Ingrese un nombre de usuario.</div>
+          </div>
+
+          <div class="col-md-6 mx-auto mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              th:field="*{email}"
+              class="form-control"
+              required
+            />
+            <div class="invalid-feedback">Ingrese un correo válido.</div>
+          </div>
+
+          <div class="col-md-6 mx-auto mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              th:field="*{password}"
+              class="form-control"
+              required
+            />
+            <div class="invalid-feedback">Ingrese una contraseña.</div>
+          </div>
+
+          <div class="col-12 text-center">
+            <button type="submit" class="btn">Registrarse</button>
+          </div>
+        </form>
+        <p class="mt-3 text-center">
+          ¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>
+        </p>
+      </div>
+    </main>
+
+    <script src="/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

@@ -324,3 +324,13 @@ body {
 .section-spacing {
   margin-top: 32px;
 }
+
+body.register-page .section-title {
+  justify-content: center; 
+  width: 100%;
+}
+
+body.register-page .section-title h1 {
+  text-align: center;
+  margin: 0 auto;
+}
