@@ -72,13 +72,6 @@ public class UserInfo {
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
-    /**
-     * Constructor por defecto.
-     */
-    public UserInfo() {
-        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
-        // entidades.
-    }
 
     /*
      * Getters y setters generados por Lombok(@Data)

@@ -39,19 +39,5 @@ public class Category {
     @Column(name = "description_category")
     private String description;
 
-    /**
-     * Constructor por defecto.
-     * 
-     * Este constructor está vacío porque la clase utiliza la anotación @Data de
-     * Lombok,
-     * que genera automáticamente los métodos getters, setters y otros constructores
-     * necesarios.
-     * El constructor vacío es requerido por JPA para la creación de instancias
-     * mediante reflexión.
-     */
-    public Category() {
-        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
-        // entidades.
-    }
 
 }

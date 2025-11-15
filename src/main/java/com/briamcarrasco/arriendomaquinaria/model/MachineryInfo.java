@@ -41,12 +41,5 @@ public class MachineryInfo {
     @OneToOne(mappedBy = "machineryInfo")
     private Machinery machinery;
 
-    /**
-     * Constructor por defecto.
-     */
-    public MachineryInfo() {
-        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
-        // entidades.
-    }
 
 }

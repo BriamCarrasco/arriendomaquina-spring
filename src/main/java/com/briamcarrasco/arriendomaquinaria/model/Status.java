@@ -32,12 +32,5 @@ public class Status {
     @Column(name = "name_status", nullable = false)
     private String name;
 
-    /**
-     * Constructor por defecto.
-     */
-    public Status() {
-        // Método vacío intencionalmente. JPA exige un constructor por defecto para las
-        // entidades.
-    }
 
 }
