@@ -14,6 +14,7 @@ import com.briamcarrasco.arriendomaquinaria.service.MyUserDetailsService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_BEARER_PREFIX;
+import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_EXPIRATION_TIME;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class AuthController {
             Cookie cookie = new Cookie("jwt_token", sanitizedToken);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setMaxAge((int) (TOKEN_EXPIRATION_TIME / 1000));
             response.addCookie(cookie);
             response.setHeader("Set-Cookie",
                     String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict", sanitizedToken,
