@@ -4,9 +4,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.briamcarrasco.arriendomaquinaria.dto.LoginRequestDto;
 import com.briamcarrasco.arriendomaquinaria.jwt.JWTAuthtenticationConfig;
 import com.briamcarrasco.arriendomaquinaria.service.MyUserDetailsService;
 
@@ -47,18 +48,14 @@ public class AuthController {
      * @return redirección a la página correspondiente
      */
     @PostMapping("/auth/login")
-    public String login(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            HttpServletResponse response) {
+    public String login(@ModelAttribute LoginRequestDto loginRequest, HttpServletResponse response) {
         try {
-            UserDetails user = userDetailsService.loadUserByUsername(username);
-            if (!passwordEncoder.matches(password, user.getPassword())) {
+            UserDetails user = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 return "redirect:/login?error";
             }
-
             String role = user.getAuthorities().stream().findFirst().map(Object::toString).orElse("ROLE_USER");
-            String token = jwtAuthtenticationConfig.getJWTToken(username, role);
+            String token = jwtAuthtenticationConfig.getJWTToken(loginRequest.getUsername(), role);
             Cookie cookie = new Cookie("jwt_token", token.substring(TOKEN_BEARER_PREFIX.length()));
             cookie.setHttpOnly(true);
             cookie.setPath("/");

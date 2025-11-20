@@ -5,10 +5,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.briamcarrasco.arriendomaquinaria.dto.RegisterRequestDto;
 import com.briamcarrasco.arriendomaquinaria.model.User;
 import com.briamcarrasco.arriendomaquinaria.service.UserService;
-import org.springframework.ui.Model;
 
+import jakarta.validation.Valid;
+
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 /**
  * Controlador para el registro de usuarios en el sistema.
@@ -23,19 +27,23 @@ public class RegisterController {
         this.userService = userService;
     }
 
-
-
     @PostMapping("/register/user")
-    public String registerUser(@ModelAttribute("user") User user, Model model) {
+    public String registerUser(@Valid @ModelAttribute("registerRequest") RegisterRequestDto registerRequest,
+            BindingResult result,
+            Model model) {
+        if (result.hasErrors()) {
+            return "register";
+        }
         try {
-            userService.createUser(user.getUsername(), user.getPassword(), user.getEmail());
+            userService.createUser(registerRequest.getUsername(),
+                    registerRequest.getPassword(),
+                    registerRequest.getEmail());
             return "redirect:/login?registered";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "register";
         }
     }
-    
 
     /**
      * Muestra la página de registro de usuario.
@@ -44,7 +52,7 @@ public class RegisterController {
      */
     @GetMapping("/register")
     public String register(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("registerRequest", new RegisterRequestDto());
         return "register";
     }
 
