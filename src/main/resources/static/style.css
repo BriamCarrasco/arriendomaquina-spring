@@ -22,6 +22,7 @@ body {
     "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   color: var(--ink);
   background: var(--bg);
+  padding: 0;
 }
 
 /* ===== Topbar ===== */
@@ -170,10 +171,6 @@ h2 {
   font-weight: 700;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-}
 .banner-app {
   width: 100%;
   background: #f9e79f;
