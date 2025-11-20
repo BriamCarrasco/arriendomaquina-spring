@@ -15,12 +15,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_BEARER_PREFIX;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Controlador para la autenticación de usuarios en el sistema.
  * Gestiona el proceso de inicio de sesión y la generación del token JWT.
  */
 @Controller
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final JWTAuthtenticationConfig jwtAuthtenticationConfig;
     private final MyUserDetailsService userDetailsService;
@@ -66,7 +71,7 @@ public class AuthController {
                             cookie.getMaxAge()));
             return "redirect:/home";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error en el proceso de login", e);
             return "redirect:/login?error";
         }
     }
