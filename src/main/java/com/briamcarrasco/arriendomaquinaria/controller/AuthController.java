@@ -74,6 +74,7 @@ public class AuthController {
             String sanitizedToken = sanitizeForHeader(token.substring(TOKEN_BEARER_PREFIX.length()));
             Cookie cookie = new Cookie("jwt_token", sanitizedToken);
             cookie.setHttpOnly(true);
+            cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge((int) (TOKEN_EXPIRATION_TIME / 1000));
             response.addCookie(cookie);
