@@ -78,7 +78,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      */
     private Claims parseClaims(String rawToken) {
         return Jwts.parser()
-                .verifyWith(getSigningKey(SUPER_SECRET_KEY)) 
+                .verifyWith(getSigningKey(SUPER_SECRET_KEY))
                 .build()
                 .parseSignedClaims(rawToken)
                 .getPayload();
@@ -126,7 +126,13 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
             chain.doFilter(request, response);
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("jwt_error", "TOKEN_EXPIRED");
+            SecurityContextHolder.clearContext();
+            chain.doFilter(request, response);
+        } catch (UnsupportedJwtException | MalformedJwtException e) {
+            request.setAttribute("jwt_error", "TOKEN_INVALID");
+            SecurityContextHolder.clearContext();
             chain.doFilter(request, response);
         }
     }

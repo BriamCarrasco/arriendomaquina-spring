@@ -26,14 +26,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig {
 
         private final JWTAuthorizationFilter jwtAuthorizationFilter;
+        private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+        private final JsonAccessDeniedHandler jsonAccessDeniedHandler;
 
         /**
          * Constructor que recibe el filtro de autorización JWT.
          *
          * @param jwtAuthorizationFilter filtro para validar tokens JWT
          */
-        public WebSecurityConfig(JWTAuthorizationFilter jwtAuthorizationFilter) {
+        public WebSecurityConfig(JWTAuthorizationFilter jwtAuthorizationFilter,
+                        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                        JsonAccessDeniedHandler jsonAccessDeniedHandler) {
                 this.jwtAuthorizationFilter = jwtAuthorizationFilter;
+                this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+                this.jsonAccessDeniedHandler = jsonAccessDeniedHandler;
         }
 
         /**
@@ -51,14 +57,16 @@ public class WebSecurityConfig {
                 http
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
-                                                .ignoringRequestMatchers("/logout") 
-                                )
+                                                .ignoringRequestMatchers("/logout"))
+                                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                                .accessDeniedHandler(jsonAccessDeniedHandler))
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/landing", "/login", "/auth/login",
                                                                 "/css/**", "/js/**", "/images/**", "/webjars/**",
-                                                                "/style.css", "/api/machinery/**","register",
-                                                                "/search", "/search/**", "/bootstrap.min.css", "/bootstrap.bundle.min.js","/favicon.ico",
+                                                                "/style.css", "/api/machinery/**", "register",
+                                                                "/search", "/search/**", "/bootstrap.min.css",
+                                                                "/bootstrap.bundle.min.js", "/favicon.ico",
                                                                 "/register/user")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
