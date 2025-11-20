@@ -41,6 +41,15 @@ public class AuthController {
     }
 
     /**
+     * Sanitiza el valor para evitar CRLF injection.
+     */
+    private String sanitizeForHeader(String value) {
+        if (value == null)
+            return "";
+        return value.replaceAll("[\\r\\n]", "");
+    }
+
+    /**
      * Procesa la solicitud de inicio de sesión.
      * Verifica las credenciales del usuario, genera el token JWT y lo almacena en
      * una cookie.
@@ -61,13 +70,14 @@ public class AuthController {
             }
             String role = user.getAuthorities().stream().findFirst().map(Object::toString).orElse("ROLE_USER");
             String token = jwtAuthtenticationConfig.getJWTToken(loginRequest.getUsername(), role);
-            Cookie cookie = new Cookie("jwt_token", token.substring(TOKEN_BEARER_PREFIX.length()));
+            String sanitizedToken = sanitizeForHeader(token.substring(TOKEN_BEARER_PREFIX.length()));
+            Cookie cookie = new Cookie("jwt_token", sanitizedToken);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(cookie);
             response.setHeader("Set-Cookie",
-                    String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict", cookie.getValue(),
+                    String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict", sanitizedToken,
                             cookie.getMaxAge()));
             return "redirect:/home";
         } catch (Exception e) {
