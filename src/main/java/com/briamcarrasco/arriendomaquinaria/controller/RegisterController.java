@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.briamcarrasco.arriendomaquinaria.dto.RegisterRequestDto;
-import com.briamcarrasco.arriendomaquinaria.model.User;
 import com.briamcarrasco.arriendomaquinaria.service.UserService;
 
 import jakarta.validation.Valid;
@@ -21,6 +20,8 @@ import org.springframework.validation.BindingResult;
 @Controller
 public class RegisterController {
 
+    private static final String REGISTER_VIEW = "register";
+
     private final UserService userService;
 
     public RegisterController(UserService userService) {
@@ -32,7 +33,7 @@ public class RegisterController {
             BindingResult result,
             Model model) {
         if (result.hasErrors()) {
-            return "register";
+            return REGISTER_VIEW;
         }
         try {
             userService.createUser(registerRequest.getUsername(),
@@ -41,7 +42,7 @@ public class RegisterController {
             return "redirect:/login?registered";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "register";
+            return REGISTER_VIEW;
         }
     }
 
@@ -53,7 +54,7 @@ public class RegisterController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registerRequest", new RegisterRequestDto());
-        return "register";
+        return REGISTER_VIEW;
     }
 
 }
