@@ -2,6 +2,9 @@ package com.briamcarrasco.arriendomaquinaria.controller;
 
 import com.briamcarrasco.arriendomaquinaria.model.Machinery;
 import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,11 +33,35 @@ public class MachineryDetailController {
      * @return nombre de la vista de detalle de maquinaria
      */
     @GetMapping("/machinerydetail")
-    public String machineryDetail(Authentication authentication, Model model,
-            @RequestParam("id") Long id) {
+    public String machineryDetail(
+            Authentication authentication,
+            Model model,
+            @RequestParam("id") Long id,
+            HttpServletRequest request // <-- Agrega este parámetro
+    ) {
         Machinery machinery = machineryService.findById(id).orElse(null);
         model.addAttribute("machinery", machinery);
         model.addAttribute("name", authentication != null ? authentication.getName() : "Invitado");
+        String url = request.getRequestURL().toString()
+                + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        model.addAttribute("currentUrl", url);
         return "machinerydetail";
     }
+
+        /**
+     * Muestra la página pública de detalle de una maquinaria para compartir.
+     * Accesible sin autenticación.
+     */
+        @GetMapping("/public/machinerydetail")
+        public String publicMachineryDetail(
+                Model model,
+                @RequestParam("id") Long id,
+                HttpServletRequest request) {
+            Machinery machinery = machineryService.findById(id).orElse(null);
+            model.addAttribute("machinery", machinery);
+            String url = request.getRequestURL().toString()
+                    + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            model.addAttribute("currentUrl", url);
+            return "machinerydetail"; // Reusa la misma plantilla, pero sin elementos de autenticación
+        }
 }
