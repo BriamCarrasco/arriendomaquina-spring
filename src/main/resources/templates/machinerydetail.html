@@ -7,23 +7,50 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detalle de Maquinaria | Arriendo de Maquinaria</title>
+    <title>Inicio | Arriendo de Maquinaria</title>
     <link rel="stylesheet" href="/style.css" />
+
+    <meta
+      property="og:title"
+      th:content="${machinery.nameMachinery} + ' — Arriendo de Maquinaria'"
+      content="Nombre de la Maquinaria — Arriendo de Maquinaria"
+    />
+    <meta
+      property="og:description"
+      th:content="${machinery.machineryInfo != null ? machinery.machineryInfo.description : 'Maquinaria disponible para arriendo.'}"
+      content="Maquinaria disponible para arriendo."
+    />
+    <meta
+      property="og:image"
+      th:content="${machinery.imageUrl}"
+      content="/default-image.jpg"
+    />
+    <meta
+      property="og:url"
+      th:content="${currentUrl}"
+      content="https://tusitio.com/machinerydetail"
+    />
   </head>
   <body>
-    <nav class="navbar-app">
-      <h2>🌾 Arriendo de Maquinaria</h2>
+    <nav class="navbar-app" aria-label="Navegación principal">
+      <h2 id="app-title">🌾 Arriendo de Maquinaria</h2>
       <div class="right">
         <span sec:authorize="isAuthenticated()" th:inline="text">
           Hola <span class="user-name" sec:authentication="name"></span> 👋
         </span>
-        <a
+        <form
+          th:action="@{/logout}"
+          method="post"
           sec:authorize="isAuthenticated()"
-          th:href="@{/logout}"
-          class="btn btn-outline"
-          >Cerrar sesión</a
+          class="logout-form"
         >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+        </form>
         <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
           >Iniciar sesión</a
         >
@@ -33,34 +60,89 @@
     <main class="container-app">
       <div th:if="${machinery != null}" class="machinery-detail">
         <h1 th:text="${machinery.nameMachinery}">Nombre de la Maquinaria</h1>
-        
+
         <div class="machinery-detail-content">
           <div class="machinery-image">
-            <img th:src="@{${machinery.imageUrl}}" 
-                 th:alt="${machinery.nameMachinery}">
+            <img
+              th:src="@{${machinery.imageUrl}}"
+              th:alt="${machinery.nameMachinery}"
+            />
           </div>
-          
+
           <div class="machinery-text">
             <div class="machinery-info">
               <h2>Información General</h2>
-              <p><strong>Estado:</strong> <span th:text="${machinery.status}">Estado</span></p>
-              <p><strong>Precio por día:</strong> $<span th:text="${machinery.pricePerDay}">0.00</span></p>
-              <p><strong>Categoría:</strong> <span th:text="${machinery.category.name}">Categoría</span></p>
-              
+              <p>
+                <strong>Estado:</strong>
+                <span th:text="${machinery.status}">Estado</span>
+              </p>
+              <p>
+                <strong>Precio por día:</strong> $<span
+                  th:text="${machinery.pricePerDay}"
+                  >0.00</span
+                >
+              </p>
+              <p>
+                <strong>Categoría:</strong>
+                <span th:text="${machinery.category.name}">Categoría</span>
+              </p>
+
               <div th:if="${machinery.machineryInfo != null}">
                 <h3>Descripción</h3>
-                <p th:text="${machinery.machineryInfo.description}">Descripción de la maquinaria</p>
+                <p th:text="${machinery.machineryInfo.description}">
+                  Descripción de la maquinaria
+                </p>
               </div>
             </div>
-            
+
             <div class="actions">
-              <a th:href="@{/home}" class="btn">Volver al inicio</a>
-              <button class="btn btn-primary">Solicitar arriendo</button>
+              <a
+                th:href="@{/home}"
+                class="btn"
+                sec:authorize="isAuthenticated()"
+                >Volver al inicio</a
+              >
+              <button class="btn btn-primary" sec:authorize="isAuthenticated()">
+                Solicitar arriendo
+              </button>
+
+              <hr />
+
+              <div
+                class="social-share"
+                aria-label="Compartir en redes sociales"
+              >
+                <span class="share-label">Compartir:</span>
+                <button
+                  type="button"
+                  class="btn btn-outline"
+                  data-share="facebook"
+                  aria-label="Compartir en Facebook"
+                >
+                  Facebook
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline"
+                  data-share="twitter"
+                  aria-label="Compartir en Twitter"
+                >
+                  Twitter
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline"
+                  data-share="whatsapp"
+                  aria-label="Compartir en WhatsApp"
+                >
+                  WhatsApp
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div th:if="${machinery == null}" class="error-message">
         <h2>Maquinaria no encontrada</h2>
         <p>No se pudo encontrar la maquinaria solicitada.</p>
@@ -68,4 +150,5 @@
       </div>
     </main>
   </body>
+  <script src="/js/share.js" defer></script>
 </html>
