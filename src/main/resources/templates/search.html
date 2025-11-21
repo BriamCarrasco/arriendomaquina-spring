@@ -88,7 +88,7 @@
                 <p class="card-text text-muted" th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}">Categoría</p>
                 <p class="card-text"><span class="badge badge-info" th:text="${maq.status}">Estado</span></p>
                 <p class="card-text fw-semibold">Precio por día: <span th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}">$0.00</span></p>
-                <a th:href="@{/machinerydetail(id=${maq.id})}" class="btn btn-outline-primary">Ver más información</a>
+                <a th:href="@{/public/machinerydetail(id=${maq.id})}" class="btn btn-outline-primary">Ver más información</a>
               </div>
             </div>
           </div>
