@@ -67,7 +67,8 @@ public class WebSecurityConfig {
                                                                 "/style.css", "/api/machinery/**", "register",
                                                                 "/search", "/search/**", "/bootstrap.min.css",
                                                                 "/bootstrap.bundle.min.js", "/favicon.ico",
-                                                                "/register/user")
+                                                                "/register/user",
+                                                                "/public/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers
