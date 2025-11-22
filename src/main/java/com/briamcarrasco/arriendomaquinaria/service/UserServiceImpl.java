@@ -36,8 +36,19 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
-        user.setRole(User.Role.USER); 
+        user.setRole(User.Role.USER);
         return userRepository.save(user);
     }
-    
+
+    /**
+     * Busca un usuario por su nombre de usuario.
+     *
+     * @param username nombre de usuario
+     * @return el usuario encontrado o null si no existe
+     */
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 }

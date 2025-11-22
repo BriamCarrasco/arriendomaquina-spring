@@ -3,13 +3,17 @@ package com.briamcarrasco.arriendomaquinaria.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -69,6 +73,12 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private transient UserInfo userInfo;
 
+        /**
+     * Lista de reseñas asociadas al usuario.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private transient List<Review> reviews;
+
     /**
      * Enum que define los roles posibles de usuario.
      */
@@ -76,6 +86,8 @@ public class User implements UserDetails {
         ADMIN,
         USER
     }
+
+    
 
     /**
      * Devuelve la colección de autoridades otorgadas al usuario.

@@ -4,19 +4,38 @@
   xml:lang="es"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="https://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Buscar Maquinaria</title>
-    <link href="/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <nav class="navbar-app">
-      <h2>🌾 Arriendo de Maquinaria</h2>
+    <nav class="navbar-app" aria-label="Navegación principal">
+      <h2 id="app-title">🌾 Arriendo de Maquinaria</h2>
       <div class="right">
-        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+        <span sec:authorize="isAuthenticated()" th:inline="text">
+          Hola <span class="user-name" sec:authentication="name"></span> 👋
+        </span>
+        <form
+          th:action="@{/logout}"
+          method="post"
+          sec:authorize="isAuthenticated()"
+          class="logout-form"
+        >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+        </form>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+          >Iniciar sesión</a
+        >
       </div>
     </nav>
 
@@ -29,7 +48,9 @@
         <div class="row g-2 align-items-end">
           <div class="col-md-4">
             <fieldset>
-              <legend id="tipoBusquedaLabel" class="form-label d-block">Tipo de búsqueda</legend>
+              <legend id="tipoBusquedaLabel" class="form-label d-block">
+                Tipo de búsqueda
+              </legend>
               <div class="form-check form-check-inline">
                 <input
                   class="form-check-input"
@@ -41,8 +62,13 @@
                   onclick="toggleSearch('nombre')"
                   onkeydown="if(event.key==='Enter'||event.key===' '){toggleSearch('nombre');}"
                   aria-labelledby="tipoBusquedaLabel tipoNombreLabel"
+                />
+                <label
+                  class="form-check-label"
+                  for="tipoNombre"
+                  id="tipoNombreLabel"
+                  >Por nombre</label
                 >
-                <label class="form-check-label" for="tipoNombre" id="tipoNombreLabel">Por nombre</label>
               </div>
               <div class="form-check form-check-inline">
                 <input
@@ -54,20 +80,47 @@
                   onclick="toggleSearch('categoria')"
                   onkeydown="if(event.key==='Enter'||event.key===' '){toggleSearch('categoria');}"
                   aria-labelledby="tipoBusquedaLabel tipoCategoriaLabel"
+                />
+                <label
+                  class="form-check-label"
+                  for="tipoCategoria"
+                  id="tipoCategoriaLabel"
+                  >Por categoría</label
                 >
-                <label class="form-check-label" for="tipoCategoria" id="tipoCategoriaLabel">Por categoría</label>
               </div>
             </fieldset>
           </div>
 
           <div class="col-md-4">
-            <label for="nameInput" class="form-label" id="nameInputLabel">Nombre</label>
-            <input type="text" id="nameInput" name="name" class="form-control" placeholder="Nombre de maquinaria" aria-labelledby="nameInputLabel">
+            <label for="nameInput" class="form-label" id="nameInputLabel"
+              >Nombre</label
+            >
+            <input
+              type="text"
+              id="nameInput"
+              name="name"
+              class="form-control"
+              placeholder="Nombre de maquinaria"
+              aria-labelledby="nameInputLabel"
+            />
           </div>
 
           <div class="col-md-3">
-            <label for="categoryInput" class="form-label" id="categoryInputLabel">Categoría</label>
-            <input type="text" id="categoryInput" name="category" class="form-control" placeholder="Categoría" disabled aria-labelledby="categoryInputLabel">
+            <label
+              for="categoryInput"
+              class="form-label"
+              id="categoryInputLabel"
+              >Categoría</label
+            >
+            <input
+              type="text"
+              id="categoryInput"
+              name="category"
+              class="form-control"
+              placeholder="Categoría"
+              disabled
+              aria-labelledby="categoryInputLabel"
+            />
           </div>
 
           <div class="col-md-1 text-end">
@@ -81,14 +134,48 @@
           <div class="col" th:each="maq : ${maquinarias}">
             <div class="card h-100">
               <div th:if="${maq.imageUrl != null}" class="machinery-image">
-                <img th:src="${maq.imageUrl}" th:alt="${maq.nameMachinery}" class="card-img-top" />
+                <img
+                  th:src="${maq.imageUrl}"
+                  th:alt="${maq.nameMachinery}"
+                  class="card-img-top"
+                />
               </div>
               <div class="card-body">
-                <h5 class="card-title" th:text="${maq.nameMachinery}">Nombre</h5>
-                <p class="card-text text-muted" th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}">Categoría</p>
-                <p class="card-text"><span class="badge badge-info" th:text="${maq.status}">Estado</span></p>
-                <p class="card-text fw-semibold">Precio por día: <span th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}">$0.00</span></p>
-                <a th:href="@{/public/machinerydetail(id=${maq.id})}" class="btn btn-outline-primary">Ver más información</a>
+                <h5 class="card-title" th:text="${maq.nameMachinery}">
+                  Nombre
+                </h5>
+                <p
+                  class="card-text text-muted"
+                  th:text="${maq.category != null ? maq.category.name : 'Sin categoría'}"
+                >
+                  Categoría
+                </p>
+                <p class="card-text">
+                  <span class="badge badge-info" th:text="${maq.status}"
+                    >Estado</span
+                  >
+                </p>
+                <p class="card-text fw-semibold">
+                  Precio por día:
+                  <span
+                    th:text="${#numbers.formatDecimal(maq.pricePerDay, 0, 'COMMA', 2, 'POINT')}"
+                    >$0.00</span
+                  >
+                </p>
+                <th:block sec:authorize="isAuthenticated()">
+                  <a
+                    th:href="@{/machinerydetail(id=${maq.id})}"
+                    class="btn btn-outline-primary"
+                    >Ver más información</a
+                  >
+                </th:block>
+                <th:block sec:authorize="isAnonymous()">
+                  <a
+                    th:href="@{/public/machinerydetail(id=${maq.id})}"
+                    class="btn btn-outline-primary"
+                    >Ver más información</a
+                  >
+                </th:block>
               </div>
             </div>
           </div>

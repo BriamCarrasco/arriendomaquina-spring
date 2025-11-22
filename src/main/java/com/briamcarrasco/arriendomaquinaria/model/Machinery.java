@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Entidad que representa una maquinaria en el sistema.
@@ -69,4 +70,10 @@ public class Machinery {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "machinery_info_id", nullable = true)
     private MachineryInfo machineryInfo;
+
+    /**
+     * Lista de reseñas asociadas a la maquinaria.
+     */
+    @OneToMany(mappedBy = "machinery", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews;
 }

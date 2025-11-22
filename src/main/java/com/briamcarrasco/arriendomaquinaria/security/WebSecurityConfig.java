@@ -57,7 +57,8 @@ public class WebSecurityConfig {
                 http
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
-                                                .ignoringRequestMatchers("/logout"))
+                                                .ignoringRequestMatchers("/logout", 
+                                                                "/api/reviews/**"))
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jsonAccessDeniedHandler))
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -68,7 +69,7 @@ public class WebSecurityConfig {
                                                                 "/search", "/search/**", "/bootstrap.min.css",
                                                                 "/bootstrap.bundle.min.js", "/favicon.ico",
                                                                 "/register/user",
-                                                                "/public/**")
+                                                                "/public/**","/api/reviews/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers
@@ -127,7 +128,7 @@ public class WebSecurityConfig {
         public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
                 CookieCsrfTokenRepository repo = new CookieCsrfTokenRepository();
                 repo.setCookieCustomizer(builder -> builder
-                                .httpOnly(true)
+                                .httpOnly(false)
                                 .sameSite("Strict")
                                 .path("/"));
                 return repo;
