@@ -340,3 +340,51 @@ body.register-page .section-title h1 {
 .titulo-negro {
   color: #000;
 }
+
+.machinery-media-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; 
+  align-items: flex-start;
+}
+
+.machinery-media-list > div {
+  flex: 0 0 auto;
+}
+
+.machinery-media-list img,
+.machinery-media-list iframe {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.image-modal img {
+  max-width: 80vw;
+  max-height: 80vh;
+  border-radius: 8px;
+}
+.close-modal {
+  position: absolute;
+  top: 32px;
+  right: 48px;
+  font-size: 2.5rem;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 10000;
+}

@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
@@ -31,6 +33,8 @@ import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.*;
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+
     /**
      * Determina si la petición no debe ser filtrada por el JWT.
      *
@@ -40,12 +44,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
+        // Public routes; be explicit to avoid accidentally matching
+        // /api/machinery-media
         return path.equals("/login")
                 || path.equals("/auth/login")
                 || path.startsWith("/css/")
                 || path.startsWith("/js/")
                 || path.startsWith("/images/")
-                || path.startsWith("/api/machinery");
+                || path.equals("/api/machinery")
+                || path.startsWith("/api/machinery/");
     }
 
     /**
@@ -114,8 +121,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         try {
+            LOGGER.debug("JWT filter processing {} {}", request.getMethod(), request.getServletPath());
             String token = resolveToken(request);
             if (token != null) {
+                LOGGER.debug("JWT token present in request (length={})", token.length());
                 Claims claims = parseClaims(token);
                 if (claims.get("authorities") != null) {
                     setAuthentication(claims);
@@ -123,6 +132,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.clearContext();
                 }
             } else {
+                LOGGER.debug("No JWT token found in request");
                 SecurityContextHolder.clearContext();
             }
             chain.doFilter(request, response);

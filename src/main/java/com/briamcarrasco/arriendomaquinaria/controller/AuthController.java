@@ -12,6 +12,7 @@ import com.briamcarrasco.arriendomaquinaria.jwt.JWTAuthtenticationConfig;
 import com.briamcarrasco.arriendomaquinaria.service.MyUserDetailsService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_BEARER_PREFIX;
 import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_EXPIRATION_TIME;
@@ -63,7 +64,8 @@ public class AuthController {
      * @return redirección a la página correspondiente
      */
     @PostMapping("/auth/login")
-    public String login(@ModelAttribute LoginRequestDto loginRequest, HttpServletResponse response) {
+    public String login(@ModelAttribute LoginRequestDto loginRequest, HttpServletRequest request,
+            HttpServletResponse response) {
         try {
             UserDetails user = userDetailsService.loadUserByUsername(loginRequest.getUsername());
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
@@ -74,13 +76,18 @@ public class AuthController {
             String sanitizedToken = sanitizeForHeader(token.substring(TOKEN_BEARER_PREFIX.length()));
             Cookie cookie = new Cookie("jwt_token", sanitizedToken);
             cookie.setHttpOnly(true);
-            cookie.setSecure(true);
+            // Marcar Secure sólo si la petición se realiza por HTTPS (evitar no envío en
+            // dev HTTP)
+            cookie.setSecure(request.isSecure());
             cookie.setPath("/");
             cookie.setMaxAge((int) (TOKEN_EXPIRATION_TIME / 1000));
             response.addCookie(cookie);
-            response.setHeader("Set-Cookie",
-                    String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict", sanitizedToken,
-                            cookie.getMaxAge()));
+            String cookieHeader = String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict",
+                    sanitizedToken, cookie.getMaxAge());
+            if (request.isSecure()) {
+                cookieHeader += "; Secure";
+            }
+            response.setHeader("Set-Cookie", cookieHeader);
             return "redirect:/home";
         } catch (Exception e) {
             logger.error("Error en el proceso de login", e);

@@ -144,6 +144,80 @@
           </div>
         </div>
 
+        <section>
+          <h2 class="titulo-negro">Galería</h2>
+          <div class="machinery-media-list">
+            <div th:each="media : ${machinery.media}">
+              <div th:if="${media.imgUrl != null}">
+                <img
+                  th:src="@{${media.imgUrl}}"
+                  alt="Maquinaria"
+                  width="200"
+                  height="100"
+                />
+              </div>
+              <div th:if="${media.vidUrl != null}">
+                <iframe
+                  th:src="@{${media.vidUrl}}"
+                  width="200"
+                  height="100"
+                  allowfullscreen
+                  title="Video de maquinaria"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="add-media" sec:authorize="hasRole('ADMIN')">
+          <hr />
+          <h3>Agregar Imagen / Video</h3>
+
+          <h4 class="titulo-negro">Agregar desde dispositivo</h4>
+          <form
+            id="mediaImageUploadForm"
+            th:data-machinery-id="${machinery.id}"
+            class="media-form"
+            enctype="multipart/form-data"
+          >
+            <label for="imageFile">Subir archivo imagen:</label>
+            <input type="file" id="imageFile" name="file" accept="image/*" />
+            <button type="submit" class="btn btn-outline">Subir Imagen</button>
+          </form>
+
+          <h4 class="titulo-negro">Agregar desde URL</h4>
+          <form
+            id="mediaImageForm"
+            th:data-machinery-id="${machinery.id}"
+            class="media-form"
+          >
+            <label for="imageUrl">URL Imagen:</label>
+            <input
+              type="url"
+              id="imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+            />
+            <button type="submit" class="btn btn-outline">
+              Agregar Imagen
+            </button>
+          </form>
+          <form
+            id="mediaVideoForm"
+            th:data-machinery-id="${machinery.id}"
+            class="media-form"
+          >
+            <label for="videoUrl">URL Video:</label>
+            <input
+              type="url"
+              id="videoUrl"
+              name="videoUrl"
+              placeholder="https://..."
+            />
+            <button type="submit" class="btn btn-outline">Agregar Video</button>
+          </form>
+        </div>
+
         <section class="reviews-section">
           <h2>Reseñas</h2>
           <div th:if="${averageRating != null}" class="average-rating">
@@ -225,5 +299,11 @@
     </main>
     <script src="/js/share.js" defer></script>
     <script src="/js/review.js" defer></script>
+    <script src="/js/media.js" defer></script>
   </body>
+
+  <div id="image-modal" class="image-modal" style="display: none">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <img id="modal-img" src="" alt="Vista ampliada" />
+  </div>
 </html>

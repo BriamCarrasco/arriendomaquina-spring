@@ -4,6 +4,7 @@ import com.briamcarrasco.arriendomaquinaria.jwt.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
         private final JWTAuthorizationFilter jwtAuthorizationFilter;
@@ -57,8 +59,9 @@ public class WebSecurityConfig {
                 http
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
-                                                .ignoringRequestMatchers("/logout", 
-                                                                "/api/reviews/**"))
+                                                .ignoringRequestMatchers("/logout",
+                                                                "/api/reviews/**",
+                                                                "/api/machinery-media/**"))
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jsonAccessDeniedHandler))
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -69,7 +72,8 @@ public class WebSecurityConfig {
                                                                 "/search", "/search/**", "/bootstrap.min.css",
                                                                 "/bootstrap.bundle.min.js", "/favicon.ico",
                                                                 "/register/user",
-                                                                "/public/**","/api/reviews/**")
+                                                                "/public/**", "/api/reviews/**",
+                                                                "/api/machinery-media/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers
@@ -81,7 +85,7 @@ public class WebSecurityConfig {
                                                                                                 +
                                                                                                 "style-src 'self' https://cdn.jsdelivr.net; "
                                                                                                 +
-                                                                                                "img-src 'self' data:; "
+                                                                                                "img-src 'self' data: https:; "
                                                                                                 +
                                                                                                 "font-src 'self' data:; "
                                                                                                 +
@@ -90,7 +94,16 @@ public class WebSecurityConfig {
                                                                                                 "frame-ancestors 'none'; "
                                                                                                 +
                                                                                                 "object-src 'none'; " +
-                                                                                                "media-src 'self'; " +
+                                                                                                // allow media from
+                                                                                                // https external hosts
+                                                                                                // and common players
+                                                                                                "media-src 'self' https:; "
+                                                                                                +
+                                                                                                // allow embedding
+                                                                                                // trusted players
+                                                                                                // (YouTube, Vimeo)
+                                                                                                "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; "
+                                                                                                +
                                                                                                 "upgrade-insecure-requests;"))
                                                 .frameOptions(frame -> frame.deny())
                                                 .httpStrictTransportSecurity(hsts -> hsts

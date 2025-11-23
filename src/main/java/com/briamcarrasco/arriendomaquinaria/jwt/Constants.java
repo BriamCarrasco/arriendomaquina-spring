@@ -26,6 +26,11 @@ public class Constants {
     public static final long TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24; // 24h
     public static final String SUPER_SECRET_KEY = getEnvSecret();
 
+    public static final String DUPLICATE_MEDIA_ERROR = "duplicate_media";
+    public static final String ERROR_KEY = "error";
+    public static final String MESSAGE_KEY = "message";
+    public static final String UNIQUE_CONSTRAINT_ERROR_MSG = "No se puede agregar media: posible restricción única en la base de datos";
+
     /**
      * Obtiene la clave secreta JWT desde las variables de entorno.
      *
