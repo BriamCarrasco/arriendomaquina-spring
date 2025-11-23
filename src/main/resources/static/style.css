@@ -336,3 +336,7 @@ body.register-page .section-title h1 {
 .logout-form {
   display: inline;
 }
+
+.titulo-negro {
+  color: #000;
+}

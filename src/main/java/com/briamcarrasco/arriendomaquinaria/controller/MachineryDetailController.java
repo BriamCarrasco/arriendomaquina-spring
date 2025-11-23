@@ -25,6 +25,9 @@ public class MachineryDetailController {
 
     private static final Logger logger = LoggerFactory.getLogger(MachineryDetailController.class);
 
+    private static final String MACHINERY_DETAIL_VIEW = "machinerydetail";
+    private static final String MACHINERY_ATTR = "machinery";
+
     private final MachineryService machineryService;
     private final ReviewService reviewService;
 
@@ -42,8 +45,8 @@ public class MachineryDetailController {
         Machinery machinery = machineryService.findById(id).orElse(null);
         if (machinery == null) {
             logger.warn("Maquinaria no encontrada id={}", id);
-            model.addAttribute("machinery", null);
-            return "machinerydetail";
+            model.addAttribute(MACHINERY_ATTR, null);
+            return "machinery-not-found"; // Nueva vista para error
         }
 
         List<Review> reviews = reviewService.getReviewsByMachinery(id);
@@ -52,34 +55,32 @@ public class MachineryDetailController {
         String currentUrl = request.getRequestURL().toString()
                 + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
-        model.addAttribute("machinery", machinery);
+        model.addAttribute(MACHINERY_ATTR, machinery);
         model.addAttribute("reviews", reviews);
         model.addAttribute("averageRating", averageRating);
         model.addAttribute("currentUrl", currentUrl);
         model.addAttribute("name", authentication != null ? authentication.getName() : "Invitado");
-        return "machinerydetail";
+        return MACHINERY_DETAIL_VIEW;
     }
 
-    // Endpoint público para compartir sin requerir autenticación
     @GetMapping("/public/machinerydetail")
     public String publicMachineryDetail(@RequestParam(name = "id") Long id,
             Model model,
             HttpServletRequest request) {
         Machinery machinery = machineryService.findById(id).orElse(null);
         if (machinery == null) {
-            model.addAttribute("machinery", null);
-            return "machinerydetail";
+            model.addAttribute(MACHINERY_ATTR, null);
+            return "machinery-not-found"; // Nueva vista para error
         }
         List<Review> reviews = reviewService.getReviewsByMachinery(id);
         Double averageRating = reviewService.getAverageRating(id);
         String currentUrl = request.getRequestURL().toString()
                 + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-        model.addAttribute("machinery", machinery);
+        model.addAttribute(MACHINERY_ATTR, machinery);
         model.addAttribute("reviews", reviews);
         model.addAttribute("averageRating", averageRating);
         model.addAttribute("currentUrl", currentUrl);
-        // nombre genérico, no autenticado
         model.addAttribute("name", "Visitante");
-        return "machinerydetail";
+        return MACHINERY_DETAIL_VIEW;
     }
 }

@@ -76,4 +76,11 @@ public class Machinery {
      */
     @OneToMany(mappedBy = "machinery", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
+
+    /**
+     * Lista de medios (imágenes, videos) asociados a la maquinaria.
+     */
+    @OneToMany(mappedBy = "machinery", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MachineryMedia> media;
+    
 }
