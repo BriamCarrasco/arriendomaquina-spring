@@ -34,7 +34,10 @@ public class WebSecurityConfig {
         /**
          * Constructor que recibe el filtro de autorización JWT.
          *
-         * @param jwtAuthorizationFilter filtro para validar tokens JWT
+         * @param jwtAuthorizationFilter      filtro para validar tokens JWT
+         * @param jwtAuthenticationEntryPoint manejador de errores de autenticación JWT
+         * @param jsonAccessDeniedHandler     manejador de acceso denegado en formato
+         *                                    JSON
          */
         public WebSecurityConfig(JWTAuthorizationFilter jwtAuthorizationFilter,
                         JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
@@ -94,14 +97,8 @@ public class WebSecurityConfig {
                                                                                                 "frame-ancestors 'none'; "
                                                                                                 +
                                                                                                 "object-src 'none'; " +
-                                                                                                // allow media from
-                                                                                                // https external hosts
-                                                                                                // and common players
                                                                                                 "media-src 'self' https:; "
                                                                                                 +
-                                                                                                // allow embedding
-                                                                                                // trusted players
-                                                                                                // (YouTube, Vimeo)
                                                                                                 "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; "
                                                                                                 +
                                                                                                 "upgrade-insecure-requests;"))

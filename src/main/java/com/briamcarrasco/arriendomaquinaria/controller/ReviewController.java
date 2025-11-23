@@ -14,6 +14,14 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controlador REST para la gestión de reseñas de maquinaria.
+ * 
+ * Permite obtener reseñas por maquinaria, calcular el promedio de
+ * calificaciones
+ * y crear o actualizar reseñas asociadas a una maquinaria y usuario
+ * autenticado.
+ */
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewController {
@@ -30,16 +38,36 @@ public class ReviewController {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Obtiene la lista de reseñas asociadas a una maquinaria.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @return lista de reseñas de la maquinaria
+     */
     @GetMapping("/machinery/{machineryId}")
     public ResponseEntity<List<Review>> getReviewsByMachinery(@PathVariable Long machineryId) {
         return ResponseEntity.ok(reviewService.getReviewsByMachinery(machineryId));
     }
 
+    /**
+     * Obtiene el promedio de calificaciones de una maquinaria.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @return promedio de calificaciones
+     */
     @GetMapping("/machinery/{machineryId}/average")
     public ResponseEntity<Double> getAverage(@PathVariable Long machineryId) {
         return ResponseEntity.ok(reviewService.getAverageRating(machineryId));
     }
 
+    /**
+     * Crea o actualiza una reseña para una maquinaria por el usuario autenticado.
+     *
+     * @param machineryId    identificador de la maquinaria
+     * @param request        datos de la reseña (calificación y comentario)
+     * @param authentication información de autenticación del usuario
+     * @return respuesta con los datos de la reseña y el promedio actualizado
+     */
     @PostMapping("/machinery/{machineryId}")
     public ResponseEntity<Object> upsertReview(@PathVariable Long machineryId,
             @Validated @RequestBody ReviewRequest request,

@@ -19,6 +19,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controlador para mostrar el detalle de una maquinaria y sus reseñas.
+ * 
+ * Permite visualizar la información de una maquinaria, sus reseñas y el
+ * promedio de calificaciones,
+ * tanto para usuarios autenticados como para visitantes públicos.
  */
 @Controller
 public class MachineryDetailController {
@@ -36,6 +40,18 @@ public class MachineryDetailController {
         this.reviewService = reviewService;
     }
 
+    /**
+     * Muestra el detalle de una maquinaria para usuarios autenticados.
+     * Incluye la maquinaria, sus reseñas, el promedio de calificaciones y el nombre
+     * del usuario.
+     *
+     * @param id             identificador de la maquinaria
+     * @param authentication información de autenticación del usuario
+     * @param model          modelo para la vista
+     * @param request        solicitud HTTP para obtener la URL actual
+     * @return nombre de la vista de detalle o vista de error si no se encuentra la
+     *         maquinaria
+     */
     @GetMapping("/machinerydetail")
     public String machineryDetail(@RequestParam(name = "id") Long id,
             Authentication authentication,
@@ -46,7 +62,7 @@ public class MachineryDetailController {
         if (machinery == null) {
             logger.warn("Maquinaria no encontrada id={}", id);
             model.addAttribute(MACHINERY_ATTR, null);
-            return "machinery-not-found"; // Nueva vista para error
+            return "machinery-not-found";
         }
 
         List<Review> reviews = reviewService.getReviewsByMachinery(id);
@@ -63,6 +79,17 @@ public class MachineryDetailController {
         return MACHINERY_DETAIL_VIEW;
     }
 
+    /**
+     * Muestra el detalle de una maquinaria para visitantes públicos.
+     * Incluye la maquinaria, sus reseñas, el promedio de calificaciones y el nombre
+     * "Visitante".
+     *
+     * @param id      identificador de la maquinaria
+     * @param model   modelo para la vista
+     * @param request solicitud HTTP para obtener la URL actual
+     * @return nombre de la vista de detalle o vista de error si no se encuentra la
+     *         maquinaria
+     */
     @GetMapping("/public/machinerydetail")
     public String publicMachineryDetail(@RequestParam(name = "id") Long id,
             Model model,
@@ -70,7 +97,7 @@ public class MachineryDetailController {
         Machinery machinery = machineryService.findById(id).orElse(null);
         if (machinery == null) {
             model.addAttribute(MACHINERY_ATTR, null);
-            return "machinery-not-found"; // Nueva vista para error
+            return "machinery-not-found";
         }
         List<Review> reviews = reviewService.getReviewsByMachinery(id);
         Double averageRating = reviewService.getAverageRating(id);

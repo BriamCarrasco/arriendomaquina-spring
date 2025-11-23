@@ -15,7 +15,6 @@ import java.util.Optional;
 @Service
 public class MachineryServiceImpl implements MachineryService {
 
-    
     private final MachineryRepository machineryRepository;
 
     public MachineryServiceImpl(MachineryRepository machineryRepository) {

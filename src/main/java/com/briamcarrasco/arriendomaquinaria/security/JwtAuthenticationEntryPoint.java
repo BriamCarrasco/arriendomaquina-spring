@@ -23,6 +23,16 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Maneja las respuestas de autenticación fallida devolviendo un JSON con
+     * información del error.
+     *
+     * @param request       solicitud HTTP recibida
+     * @param response      respuesta HTTP a enviar
+     * @param authException excepción de autenticación
+     * @throws IOException      si ocurre un error de entrada/salida
+     * @throws ServletException si ocurre un error en el servlet
+     */
     @Override
     public void commence(HttpServletRequest request,
             HttpServletResponse response,

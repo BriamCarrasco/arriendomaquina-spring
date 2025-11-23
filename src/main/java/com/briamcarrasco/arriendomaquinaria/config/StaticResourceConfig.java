@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuración para servir archivos estáticos subidos por los usuarios.
+ * Permite acceder a los archivos bajo la ruta /uploads/** desde el sistema de
+ * archivos local.
+ */
 @Configuration
 public class StaticResourceConfig implements WebMvcConfigurer {
 
@@ -17,7 +22,6 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path dir = Paths.get(uploadDir).toAbsolutePath().normalize();
-        // Sirve archivos subidos bajo /uploads/**
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + dir.toString() + "/");
     }

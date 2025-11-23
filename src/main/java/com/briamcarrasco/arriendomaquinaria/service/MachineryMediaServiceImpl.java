@@ -17,6 +17,14 @@ import com.briamcarrasco.arriendomaquinaria.model.MachineryMedia;
 import com.briamcarrasco.arriendomaquinaria.repository.MachineryMediaRepository;
 import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
 
+/**
+ * Implementación del servicio para la gestión de archivos multimedia asociados
+ * a maquinarias.
+ * 
+ * Permite agregar imágenes y videos a una maquinaria, obtener archivos
+ * multimedia por maquinaria,
+ * subir archivos de imagen y eliminar archivos multimedia.
+ */
 @Service
 @Transactional
 public class MachineryMediaServiceImpl implements MachineryMediaService {
@@ -33,11 +41,24 @@ public class MachineryMediaServiceImpl implements MachineryMediaService {
         this.machineryRepository = machineryRepository;
     }
 
+    /**
+     * Obtiene la lista de archivos multimedia asociados a una maquinaria.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @return lista de objetos MachineryMedia
+     */
     @Override
     public List<MachineryMedia> getMediaByMachinery(Long machineryId) {
         return mediaRepository.findByMachineryId(machineryId);
     }
 
+    /**
+     * Agrega una imagen a una maquinaria usando una URL.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @param imageUrl    URL de la imagen
+     * @return el objeto MachineryMedia creado
+     */
     @Override
     public MachineryMedia addImage(Long machineryId, String imageUrl) {
         Machinery machinery = machineryRepository.findById(machineryId)
@@ -48,6 +69,16 @@ public class MachineryMediaServiceImpl implements MachineryMediaService {
         return mediaRepository.save(media);
     }
 
+    /**
+     * Agrega una imagen a una maquinaria subiendo un archivo.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @param file        archivo de imagen a subir
+     * @return el objeto MachineryMedia creado
+     * @throws IllegalArgumentException si el archivo es vacío o el tipo no es
+     *                                  permitido
+     * @throws IllegalStateException    si ocurre un error al guardar el archivo
+     */
     @Override
     public MachineryMedia addImageFile(Long machineryId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -70,7 +101,7 @@ public class MachineryMediaServiceImpl implements MachineryMediaService {
                 extension = ".webp";
                 break;
             default:
-                extension = ".img"; // genérico si no reconocido, aún imagen
+                extension = ".img";
         }
 
         String filename = UUID.randomUUID().toString() + extension;
@@ -91,6 +122,13 @@ public class MachineryMediaServiceImpl implements MachineryMediaService {
         return mediaRepository.save(media);
     }
 
+    /**
+     * Agrega un video a una maquinaria usando una URL.
+     *
+     * @param machineryId identificador de la maquinaria
+     * @param videoUrl    URL del video
+     * @return el objeto MachineryMedia creado
+     */
     @Override
     public MachineryMedia addVideo(Long machineryId, String videoUrl) {
         Machinery machinery = machineryRepository.findById(machineryId)
@@ -101,6 +139,11 @@ public class MachineryMediaServiceImpl implements MachineryMediaService {
         return mediaRepository.save(media);
     }
 
+    /**
+     * Elimina un archivo multimedia por su identificador.
+     *
+     * @param mediaId identificador del archivo multimedia a eliminar
+     */
     @Override
     public void deleteMedia(Long mediaId) {
         mediaRepository.deleteById(mediaId);

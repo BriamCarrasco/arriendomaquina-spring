@@ -39,6 +39,7 @@ public class AdminMachineryController {
      * @param categoryId    identificador de la categoría
      * @param status        estado de la maquinaria
      * @param pricePerDay   precio por día de arriendo
+     * @param imageUrl      URL de la imagen de la maquinaria (opcional)
      * @return redirección a la página principal
      */
     @PostMapping
@@ -58,9 +59,7 @@ public class AdminMachineryController {
         category.setId(categoryId);
         machinery.setCategory(category);
 
-        // Manejar imagen: usar imagen por defecto si no se proporciona
         if (imageUrl == null || imageUrl.trim().isEmpty()) {
-            // Usar una imagen existente como placeholder
             machinery.setImageUrl("/images/Case_IH_Axial-Flow.png");
         } else {
             machinery.setImageUrl(imageUrl.trim());
@@ -123,17 +122,6 @@ public class AdminMachineryController {
     }
 
     /**
-     * Busca maquinarias por nombre o categoría y muestra el resultado en la vista
-     * de búsqueda.
-     * Se aplica sanitización de entradas para prevenir ataques XSS.
-     *
-     * @param name     nombre de la maquinaria (opcional)
-     * @param category nombre de la categoría (opcional)
-     * @param tipo     tipo de búsqueda: "nombre" o "categoria"
-     * @param model    modelo para la vista
-     * @return nombre de la vista de búsqueda
-     */
-    /**
      * Tipos permitidos de búsqueda.
      */
     public enum TipoBusqueda {
@@ -144,6 +132,17 @@ public class AdminMachineryController {
         }
     }
 
+    /**
+     * Busca maquinarias por nombre o categoría y muestra el resultado en la vista
+     * de búsqueda.
+     * Se aplica sanitización de entradas para prevenir ataques XSS.
+     *
+     * @param name     nombre de la maquinaria (opcional)
+     * @param category nombre de la categoría (opcional)
+     * @param tipo     tipo de búsqueda: "nombre" o "categoria"
+     * @param model    modelo para la vista
+     * @return nombre de la vista de búsqueda
+     */
     @GetMapping("/search")
     public String buscarMaquinaria(
             @RequestParam(required = false) @Size(max = 50, message = "El nombre no debe superar 50 caracteres") @Pattern(regexp = "[\\p{L}\\p{N} .-]*", message = "Nombre contiene caracteres no permitidos") String name,

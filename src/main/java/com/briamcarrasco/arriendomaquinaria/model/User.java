@@ -87,7 +87,6 @@ public class User implements UserDetails {
         USER
     }
 
-    
 
     /**
      * Devuelve la colección de autoridades otorgadas al usuario.

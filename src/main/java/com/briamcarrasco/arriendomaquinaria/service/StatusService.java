@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Interfaz para el servicio de gestión de estados en el sistema de arriendo de
  * maquinaria.
+ * 
  * Define el contrato para obtener la lista de todos los estados registrados.
  */
 public interface StatusService {

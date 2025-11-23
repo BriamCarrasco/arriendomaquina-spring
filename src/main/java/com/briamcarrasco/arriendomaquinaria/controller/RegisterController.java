@@ -15,7 +15,8 @@ import org.springframework.validation.BindingResult;
 
 /**
  * Controlador para el registro de usuarios en el sistema.
- * Gestiona la ruta para mostrar la vista de registro de usuario.
+ * Gestiona la ruta para mostrar la vista de registro de usuario y procesar el
+ * registro.
  */
 @Controller
 public class RegisterController {
@@ -28,6 +29,15 @@ public class RegisterController {
         this.userService = userService;
     }
 
+    /**
+     * Procesa el registro de un nuevo usuario.
+     *
+     * @param registerRequest datos del usuario a registrar
+     * @param result          resultado de la validación
+     * @param model           modelo para la vista
+     * @return redirección a la página de login si el registro es exitoso, o la
+     *         vista de registro con errores
+     */
     @PostMapping("/register/user")
     public String registerUser(@Valid @ModelAttribute("registerRequest") RegisterRequestDto registerRequest,
             BindingResult result,
@@ -49,6 +59,7 @@ public class RegisterController {
     /**
      * Muestra la página de registro de usuario.
      *
+     * @param model modelo para la vista
      * @return nombre de la vista de registro
      */
     @GetMapping("/register")

@@ -8,15 +8,19 @@ import java.util.List;
 /**
  * Implementación del servicio para la gestión de estados en el sistema de
  * arriendo de maquinaria.
+ * 
  * Proporciona métodos para obtener la lista de todos los estados registrados.
- *
  */
 @Service
 public class StatusServiceImpl implements StatusService {
 
-    
     private final StatusRepository statusRepository;
 
+    /**
+     * Constructor para la inyección de dependencias.
+     *
+     * @param statusRepository repositorio de estados
+     */
     public StatusServiceImpl(StatusRepository statusRepository) {
         this.statusRepository = statusRepository;
     }

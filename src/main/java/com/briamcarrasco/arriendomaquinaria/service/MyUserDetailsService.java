@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 /**
  * Servicio que implementa la interfaz UserDetailsService para la autenticación
  * de usuarios.
+ * 
  * Permite cargar los detalles de un usuario a partir de su nombre de usuario.
  */
 @Service

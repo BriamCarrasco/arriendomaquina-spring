@@ -44,6 +44,9 @@ public class AuthController {
 
     /**
      * Sanitiza el valor para evitar CRLF injection.
+     *
+     * @param value valor a sanitizar
+     * @return valor sin caracteres de salto de línea
      */
     private String sanitizeForHeader(String value) {
         if (value == null)
@@ -58,9 +61,9 @@ public class AuthController {
      * Redirige a la página principal si el inicio de sesión es exitoso, o muestra
      * error si falla.
      *
-     * @param username nombre de usuario
-     * @param password contraseña del usuario
-     * @param response respuesta HTTP para agregar la cookie
+     * @param loginRequest datos de inicio de sesión
+     * @param request      solicitud HTTP
+     * @param response     respuesta HTTP para agregar la cookie
      * @return redirección a la página correspondiente
      */
     @PostMapping("/auth/login")
@@ -76,8 +79,6 @@ public class AuthController {
             String sanitizedToken = sanitizeForHeader(token.substring(TOKEN_BEARER_PREFIX.length()));
             Cookie cookie = new Cookie("jwt_token", sanitizedToken);
             cookie.setHttpOnly(true);
-            // Marcar Secure sólo si la petición se realiza por HTTPS (evitar no envío en
-            // dev HTTP)
             cookie.setSecure(request.isSecure());
             cookie.setPath("/");
             cookie.setMaxAge((int) (TOKEN_EXPIRATION_TIME / 1000));

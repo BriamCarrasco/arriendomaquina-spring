@@ -12,26 +12,42 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Entidad que representa un archivo multimedia asociado a una maquinaria.
+ * Permite almacenar la URL de una imagen o video y la relación con la
+ * maquinaria correspondiente.
+ */
 @Data
 @Table(name = "tb_machinery_media")
 @Entity
 public class MachineryMedia {
 
+    /**
+     * Identificador único del archivo multimedia.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
+    /**
+     * URL de la imagen asociada.
+     */
     @Column(name = "img_url")
     private String imgUrl;
 
+    /**
+     * URL del video asociado.
+     */
     @Column(name = "vid_url")
     private String vidUrl;
 
+    /**
+     * Maquinaria a la que pertenece el archivo multimedia.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "machinery_id", nullable = false)
-    @JsonIgnore // evitamos enviar el objeto padre para no serializar recursivamente toda la
-                // maquinaria
+    @JsonIgnore
     private Machinery machinery;
 
 }

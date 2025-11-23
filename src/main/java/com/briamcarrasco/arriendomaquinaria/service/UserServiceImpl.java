@@ -6,6 +6,15 @@ import org.springframework.stereotype.Service;
 import com.briamcarrasco.arriendomaquinaria.model.User;
 import com.briamcarrasco.arriendomaquinaria.repository.UserRepository;
 
+/**
+ * Implementación del servicio de usuarios.
+ * 
+ * Gestiona la lógica relacionada con la creación y búsqueda de usuarios,
+ * incluyendo la encriptación de contraseñas y la persistencia en la base de
+ * datos.
+ *
+ * @see UserService
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -13,6 +22,12 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructor para la inyección de dependencias.
+     *
+     * @param userRepository  repositorio de usuarios
+     * @param passwordEncoder codificador de contraseñas
+     */
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -24,8 +39,8 @@ public class UserServiceImpl implements UserService {
      * @param username nombre de usuario
      * @param password contraseña del usuario (será encriptada)
      * @param email    correo electrónico del usuario
-     * @param role     rol asignado al usuario
      * @return el usuario creado y persistido
+     * @throws IllegalArgumentException si el nombre de usuario ya existe
      */
     @Override
     public User createUser(String username, String password, String email) {
@@ -44,7 +59,7 @@ public class UserServiceImpl implements UserService {
      * Busca un usuario por su nombre de usuario.
      *
      * @param username nombre de usuario
-     * @return el usuario encontrado o null si no existe
+     * @return el usuario encontrado o {@code null} si no existe
      */
     @Override
     public User findByUsername(String username) {
