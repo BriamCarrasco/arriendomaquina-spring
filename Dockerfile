@@ -1,4 +1,3 @@
-# ...existing code...
 # Etapa 1: Build
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
@@ -9,11 +8,11 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Crear usuario no root para seguridad
-RUN addgroup --system appgroup && adduser --system appuser --ingroup appgroup
-
-# Crear carpeta para imágenes subidas y asignar permisos
-RUN mkdir /app/uploads && chown appuser:appgroup /app/uploads
+# Crear usuario no root para seguridad, carpeta para imágenes subidas y asignar permisos
+RUN addgroup --system appgroup && \
+    adduser --system appuser --ingroup appgroup && \
+    mkdir /app/uploads && \
+    chown appuser:appgroup /app/uploads
 
 USER appuser
 
