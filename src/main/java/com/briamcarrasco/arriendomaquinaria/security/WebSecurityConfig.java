@@ -64,7 +64,8 @@ public class WebSecurityConfig {
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
                                                 .ignoringRequestMatchers("/logout",
                                                                 "/api/reviews/**",
-                                                                "/api/machinery-media/**"))
+                                                                "/api/machinery-media/**",
+                                                                "/api/machinery/**"))
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jsonAccessDeniedHandler))
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
