@@ -53,7 +53,6 @@ class MachineryMediaServiceImplTest {
     void addImage_withExistingMachinery_savesMedia() {
         Machinery machinery = mock(Machinery.class);
         when(machineryRepository.findById(10L)).thenReturn(Optional.of(machinery));
-        // return same instance that will be passed to save
         when(mediaRepository.save(any(MachineryMedia.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         MachineryMedia saved = service.addImage(10L, "http://img");
@@ -96,10 +95,8 @@ class MachineryMediaServiceImplTest {
 
     @Test
     void addImageFile_withValidImage_savesAndUsesUploadDir() throws Exception {
-        // temp dir to avoid touching project structure
         Path tmp = Files.createTempDirectory("test-uploads-");
         try {
-            // set private uploadDir field via reflection
             Field f = service.getClass().getDeclaredField("uploadDir");
             f.setAccessible(true);
             f.set(service, tmp.toString());
@@ -111,9 +108,7 @@ class MachineryMediaServiceImplTest {
             MultipartFile file = mock(MultipartFile.class);
             when(file.isEmpty()).thenReturn(false);
             when(file.getContentType()).thenReturn("image/jpeg");
-            // el servicio llama transferTo(Path), así que mockeamos esa firma
             doAnswer(inv -> {
-                // simulate successful transfer without writing actual bytes
                 return null;
             }).when(file).transferTo(any(java.nio.file.Path.class));
 
@@ -131,6 +126,7 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
+                            //ignore
                         }
                     });
         }
@@ -170,7 +166,6 @@ class MachineryMediaServiceImplTest {
             // firma
             doThrow(new IOException("io err")).when(file).transferTo(any(java.nio.file.Path.class));
 
-
             IllegalStateException ex = assertThrows(IllegalStateException.class, () -> service.addImageFile(2L, file));
             assertTrue(ex.getMessage().contains("Error guardando archivo"));
         } finally {
@@ -180,6 +175,84 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
+                            //ignore
+                        }
+                    });
+        }
+    }
+
+    @Test
+    void addImageFile_withWebpContentType_savesWithWebpExtension() throws Exception {
+        Path tmp = Files.createTempDirectory("test-uploads-");
+        try {
+            Field f = service.getClass().getDeclaredField("uploadDir");
+            f.setAccessible(true);
+            f.set(service, tmp.toString());
+
+            Machinery machinery = mock(Machinery.class);
+            when(machineryRepository.findById(7L)).thenReturn(Optional.of(machinery));
+            when(mediaRepository.save(any(MachineryMedia.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            MultipartFile file = mock(MultipartFile.class);
+            when(file.isEmpty()).thenReturn(false);
+            when(file.getContentType()).thenReturn("image/webp");
+            doAnswer(inv -> {
+                // simulate successful transfer creating the file on disk
+                java.nio.file.Path target = inv.getArgument(0);
+                Files.createFile(target);
+                return null;
+            }).when(file).transferTo(any(java.nio.file.Path.class));
+
+            MachineryMedia saved = service.addImageFile(7L, file);
+
+            assertNotNull(saved);
+            assertTrue(saved.getImgUrl().startsWith("/uploads/"));
+            assertTrue(saved.getImgUrl().endsWith(".webp"));
+            verify(mediaRepository).save(any(MachineryMedia.class));
+        } finally {
+            Files.walk(tmp)
+                    .sorted((a, b) -> b.compareTo(a))
+                    .forEach(p -> {
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (IOException ignored) {
+                            //ignore
+                        }
+                    });
+        }
+    }
+
+    @Test
+    void addImageFile_fileSavedButMachineryNotFound_fileRemainsAndThrows() throws Exception {
+        Path tmp = Files.createTempDirectory("test-uploads-");
+        try {
+            Field f = service.getClass().getDeclaredField("uploadDir");
+            f.setAccessible(true);
+            f.set(service, tmp.toString());
+            when(machineryRepository.findById(42L)).thenReturn(Optional.empty());
+
+            MultipartFile file = mock(MultipartFile.class);
+            when(file.isEmpty()).thenReturn(false);
+            when(file.getContentType()).thenReturn("image/gif");
+            doAnswer(inv -> {
+                java.nio.file.Path target = inv.getArgument(0);
+                Files.createFile(target);
+                return null;
+            }).when(file).transferTo(any(java.nio.file.Path.class));
+
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                    () -> service.addImageFile(42L, file));
+            assertEquals("Maquinaria no encontrada", ex.getMessage());
+            long filesCount = Files.list(tmp).count();
+            assertTrue(filesCount >= 1);
+        } finally {
+            Files.walk(tmp)
+                    .sorted((a, b) -> b.compareTo(a))
+                    .forEach(p -> {
+                        try {
+                            Files.deleteIfExists(p);
+                        } catch (IOException ignored) {
+                            //ignore
                         }
                     });
         }
