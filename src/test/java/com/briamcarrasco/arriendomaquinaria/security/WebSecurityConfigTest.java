@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.http.ResponseCookie;
 
 class WebSecurityConfigTest {
 
@@ -23,7 +22,7 @@ class WebSecurityConfigTest {
         PasswordEncoder encoder = config.passwordEncoder();
         assertNotNull(encoder);
         assertTrue(encoder instanceof BCryptPasswordEncoder);
-        assertNotEquals("1234", encoder.encode("1234")); 
+        assertNotEquals("1234", encoder.encode("1234"));
     }
 
     @Test
@@ -34,7 +33,6 @@ class WebSecurityConfigTest {
                 mock(JsonAccessDeniedHandler.class));
         CookieCsrfTokenRepository repo = config.cookieCsrfTokenRepository();
         assertNotNull(repo);
-        // El path puede ser null en test, solo verifica la instancia
         assertTrue(repo instanceof CookieCsrfTokenRepository);
     }
 
@@ -45,7 +43,6 @@ class WebSecurityConfigTest {
                 mock(JwtAuthenticationEntryPoint.class),
                 mock(JsonAccessDeniedHandler.class));
         HttpSecurity http = mock(HttpSecurity.class, RETURNS_DEEP_STUBS);
-
         assertDoesNotThrow(() -> config.securityFilterChain(http));
     }
 
@@ -56,18 +53,12 @@ class WebSecurityConfigTest {
                 mock(JwtAuthenticationEntryPoint.class),
                 mock(JsonAccessDeniedHandler.class));
         CookieCsrfTokenRepository repo = config.cookieCsrfTokenRepository();
-
-        // Obtener el customizer por reflexión (sin hacer cast genérico)
         java.lang.reflect.Field field = CookieCsrfTokenRepository.class.getDeclaredField("cookieCustomizer");
         field.setAccessible(true);
         Object customizerObj = field.get(repo);
-
-        // Llamar al método accept(Object) por reflexión evitando unchecked cast
         java.lang.reflect.Method acceptMethod = customizerObj.getClass().getMethod("accept", Object.class);
-
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("csrf", "token");
-        acceptMethod.invoke(customizerObj, builder); // ejecuta el lambda sobre el builder
-
+        acceptMethod.invoke(customizerObj, builder);
         ResponseCookie cookie = builder.build();
         assertEquals("Lax", cookie.getSameSite());
         assertFalse(cookie.isHttpOnly());
