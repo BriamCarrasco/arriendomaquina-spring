@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html
+  lang="es"
+  xml:lang="es"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="https://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inicio | Arriendo de Maquinaria</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="navbar-app" aria-label="Navegación principal">
+      <h2 id="app-title">🌾 Arriendo de Maquinaria</h2>
+      <div class="right">
+        <span sec:authorize="isAuthenticated()" th:inline="text">
+          Hola <span class="user-name" sec:authentication="name"></span> 👋
+        </span>
+        <form
+          th:action="@{/logout}"
+          method="post"
+          sec:authorize="isAuthenticated()"
+          style="display: inline"
+        >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+        </form>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+          >Iniciar sesión</a
+        >
+      </div>
+    </nav>
+
+    <main>
+      <h1>Panel de Administración de Usuarios</h1>
+
+      <!-- Formulario para crear usuario -->
+      <form th:action="@{/api/admin/users/create}" method="post">
+        <input
+          type="hidden"
+          th:name="${_csrf.parameterName}"
+          th:value="${_csrf.token}"
+        />
+        <input type="text" name="username" placeholder="Usuario" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="Contraseña"
+          required
+        />
+        <button type="submit">Crear usuario</button>
+      </form>
+
+      <!-- Tabla de usuarios -->
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+              <a
+                th:href="@{/api/admin/users/edit/{id}(id=${user.id})}"
+                class="btn btn-sm"
+                >Editar</a
+              >
+              <form
+                th:action="@{/api/admin/users/delete}"
+                method="post"
+                style="display: inline"
+              >
+                <input
+                  type="hidden"
+                  th:name="${_csrf.parameterName}"
+                  th:value="${_csrf.token}"
+                />
+                <input type="hidden" name="id" th:value="${user.id}" />
+                <button type="submit">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
