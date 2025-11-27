@@ -2,6 +2,8 @@ package com.briamcarrasco.arriendomaquinaria.controller;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,11 +16,6 @@ import com.briamcarrasco.arriendomaquinaria.service.MyUserDetailsService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_BEARER_PREFIX;
-import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.TOKEN_EXPIRATION_TIME;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Controlador para la autenticación de usuarios en el sistema.
@@ -27,7 +24,6 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final JWTAuthtenticationConfig jwtAuthtenticationConfig;
     private final MyUserDetailsService userDetailsService;
@@ -42,6 +38,10 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+
+
+
+
     /**
      * Sanitiza el valor para evitar CRLF injection.
      *
@@ -52,6 +52,20 @@ public class AuthController {
         if (value == null)
             return "";
         return value.replaceAll("[\\r\\n]", "");
+    }
+
+    private void regenerateCsrf(HttpServletRequest request, HttpServletResponse response) {
+        CsrfToken token = new HttpSessionCsrfTokenRepository().generateToken(request);
+
+        response.setHeader("XSRF-TOKEN", sanitizeForHeader(token.getToken()));
+
+
+        Cookie cookie = new Cookie("XSRF-TOKEN", token.getToken());
+        cookie.setHttpOnly(false); // necesario para que el HTML pueda leerlo
+        cookie.setSecure(false); // true sólo si usas HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(-1); // session cookie
+        response.addCookie(cookie);
     }
 
     /**
@@ -67,31 +81,31 @@ public class AuthController {
      * @return redirección a la página correspondiente
      */
     @PostMapping("/auth/login")
-    public String login(@ModelAttribute LoginRequestDto loginRequest, HttpServletRequest request,
+    public String login(@ModelAttribute LoginRequestDto loginRequest,
+            HttpServletRequest request,
             HttpServletResponse response) {
         try {
             UserDetails user = userDetailsService.loadUserByUsername(loginRequest.getUsername());
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 return "redirect:/login?error";
             }
+
+            // === GENERA JWT ===
             String role = user.getAuthorities().stream().findFirst().map(Object::toString).orElse("ROLE_USER");
             String token = jwtAuthtenticationConfig.getJWTToken(loginRequest.getUsername(), role);
-            String sanitizedToken = sanitizeForHeader(token.substring(TOKEN_BEARER_PREFIX.length()));
-            Cookie cookie = new Cookie("jwt_token", sanitizedToken);
+
+            Cookie cookie = new Cookie("jwt_token", token.substring(7));
             cookie.setHttpOnly(true);
-            cookie.setSecure(request.isSecure());
             cookie.setPath("/");
-            cookie.setMaxAge((int) (TOKEN_EXPIRATION_TIME / 1000));
+            cookie.setMaxAge(86400);
             response.addCookie(cookie);
-            String cookieHeader = String.format("jwt_token=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict",
-                    sanitizedToken, cookie.getMaxAge());
-            if (request.isSecure()) {
-                cookieHeader += "; Secure";
-            }
-            response.setHeader("Set-Cookie", cookieHeader);
+
+            // === 🔥 REGENERAR CSRF TOKEN DESPUÉS DE LOGIN ===
+            regenerateCsrf(request, response);
+
             return "redirect:/home";
+
         } catch (Exception e) {
-            logger.error("Error en el proceso de login", e);
             return "redirect:/login?error";
         }
     }
