@@ -16,6 +16,8 @@ public class Constants {
     private Constants() {
     }
 
+    public static final String REDIRECT_USERS = "redirect:/api/admin/users";
+
     // Spring Security
     public static final String LOGIN_URL = "/login";
     public static final String HEADER_AUTHORIZACION_KEY = "Authorization";
