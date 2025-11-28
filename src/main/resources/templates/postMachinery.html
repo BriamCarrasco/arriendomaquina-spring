@@ -13,10 +13,27 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <nav class="navbar-app">
-      <h2>🌾 Arriendo de Maquinaria</h2>
+    <nav class="navbar-app" aria-label="Navegación principal">
+      <h2 id="app-title">🌾 Arriendo de Maquinaria</h2>
       <div class="right">
-        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+        <span sec:authorize="isAuthenticated()" th:inline="text">
+          Hola <span class="user-name" sec:authentication="name"></span> 👋
+        </span>
+        <form
+          th:action="@{/logout}"
+          method="post"
+          sec:authorize="isAuthenticated()"
+        >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <button type="submit" class="btn-action btn-action-outline">Cerrar sesión</button>
+        </form>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn-action"
+          >Iniciar sesión</a
+        >
       </div>
     </nav>
 
@@ -114,7 +131,7 @@
           </div>
 
           <div class="col-12">
-            <button type="submit" class="btn">Publicar</button>
+            <button type="submit" class="btn-action">Publicar</button>
           </div>
         </form>
       </div>

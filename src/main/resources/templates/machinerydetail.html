@@ -10,6 +10,7 @@
     <meta charset="UTF-8" />
     <title>Inicio | Arriendo de Maquinaria</title>
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/bootstrap.min.css" />
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <meta
@@ -51,9 +52,11 @@
             th:name="${_csrf.parameterName}"
             th:value="${_csrf.token}"
           />
-          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+          <button type="submit" class="btn-action btn-action-outline">
+            Cerrar sesión
+          </button>
         </form>
-        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn-action"
           >Iniciar sesión</a
         >
       </div>
@@ -100,11 +103,11 @@
             <div class="actions">
               <a
                 th:href="@{/home}"
-                class="btn"
+                class="btn-action"
                 sec:authorize="isAuthenticated()"
                 >Volver al inicio</a
               >
-              <button class="btn btn-primary" sec:authorize="isAuthenticated()">
+              <button class="btn-action" sec:authorize="isAuthenticated()">
                 Solicitar arriendo
               </button>
 
@@ -117,7 +120,7 @@
                 <span class="share-label">Compartir:</span>
                 <button
                   type="button"
-                  class="btn btn-outline"
+                  class="btn-action btn-action-outline"
                   data-share="facebook"
                   aria-label="Compartir en Facebook"
                 >
@@ -125,7 +128,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline"
+                  class="btn-action btn-action-outline"
                   data-share="twitter"
                   aria-label="Compartir en Twitter"
                 >
@@ -133,7 +136,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline"
+                  class="btn-action btn-action-outline"
                   data-share="whatsapp"
                   aria-label="Compartir en WhatsApp"
                 >
@@ -181,8 +184,16 @@
             enctype="multipart/form-data"
           >
             <label for="imageFile">Subir archivo imagen:</label>
-            <input type="file" id="imageFile" name="file" accept="image/*" />
-            <button type="submit" class="btn btn-outline">Subir Imagen</button>
+            <input
+              type="file"
+              id="imageFile"
+              name="imageFile"
+              class="form-control"
+              accept="image/*"
+            />
+            <button type="submit" class="btn-action btn-action-outline">
+              Subir Imagen
+            </button>
           </form>
 
           <h4 class="titulo-negro">Agregar desde URL</h4>
@@ -198,7 +209,7 @@
               name="imageUrl"
               placeholder="https://..."
             />
-            <button type="submit" class="btn btn-outline">
+            <button type="submit" class="btn-action btn-action-action-outline">
               Agregar Imagen
             </button>
           </form>
@@ -214,7 +225,9 @@
               name="videoUrl"
               placeholder="https://..."
             />
-            <button type="submit" class="btn btn-outline">Agregar Video</button>
+            <button type="submit" class="btn-action btn-action-outline">
+              Agregar Video
+            </button>
           </form>
         </div>
 
@@ -283,9 +296,7 @@
                   required
                 ></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">
-                Enviar Reseña
-              </button>
+              <button type="submit" class="btn-action">Enviar Reseña</button>
             </form>
           </div>
         </section>
@@ -294,7 +305,7 @@
       <div th:if="${machinery == null}" class="error-message">
         <h2>Maquinaria no encontrada</h2>
         <p>No se pudo encontrar la maquinaria solicitada.</p>
-        <a th:href="@{/home}" class="btn">Volver al inicio</a>
+        <a th:href="@{/home}" class="btn-action">Volver al inicio</a>
       </div>
     </main>
     <script src="/js/share.js" defer></script>
