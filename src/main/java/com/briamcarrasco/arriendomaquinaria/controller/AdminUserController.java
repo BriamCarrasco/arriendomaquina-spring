@@ -36,8 +36,9 @@ public class AdminUserController {
     @PostMapping("/create")
     public String createUser(@RequestParam String username,
             @RequestParam String password,
-            @RequestParam String email) {
-        userService.createUser(username, password, email);
+            @RequestParam String email,
+            @RequestParam String role) {
+        userService.adminCreate(username, password, email, role);
         return REDIRECT_USERS;
     }
 

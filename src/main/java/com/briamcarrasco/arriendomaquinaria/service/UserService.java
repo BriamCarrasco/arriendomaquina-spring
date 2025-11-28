@@ -22,6 +22,8 @@ public interface UserService {
      */
     User createUser(String username, String password, String email);
 
+    User adminCreate(String username, String password, String email, String role);
+
     /**
      * Busca un usuario por su nombre de usuario.
      *

@@ -34,6 +34,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User adminCreate(String username, String password, String email, String role) {
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("El nombre de usuario ya existe.");
+        }
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(email);
+        user.setRole(User.Role.valueOf(role));
+        return userRepository.save(user);
+    }
+
+    @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
