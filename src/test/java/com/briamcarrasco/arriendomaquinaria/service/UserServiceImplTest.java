@@ -2,6 +2,7 @@ package com.briamcarrasco.arriendomaquinaria.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -153,5 +154,43 @@ class UserServiceImplTest {
         assertEquals(2, res.size());
         assertSame(list, res);
         verify(userRepository).findAll();
+    }
+
+        @Test
+    void adminCreate_whenUsernameExists_throws() {
+        String username = "admin";
+        when(userRepository.existsByUsername(username)).thenReturn(true);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.adminCreate(username, "pass", "admin@e.com", "ADMIN"));
+        assertEquals("El nombre de usuario ya existe.", ex.getMessage());
+
+        verify(userRepository, times(1)).existsByUsername(username);
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void adminCreate_whenValid_savesAndReturnsUserWithRole() {
+        String username = "adminuser";
+        String raw = "adminpass";
+        String encoded = "ENCODED_ADMIN";
+        String email = "admin@example.com";
+        String role = "ADMIN";
+
+        when(userRepository.existsByUsername(username)).thenReturn(false);
+        when(passwordEncoder.encode(raw)).thenReturn(encoded);
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User saved = service.adminCreate(username, raw, email, role);
+
+        assertNotNull(saved);
+        assertEquals(username, saved.getUsername());
+        assertEquals(encoded, saved.getPassword());
+        assertEquals(email, saved.getEmail());
+        assertEquals(User.Role.ADMIN, saved.getRole());
+
+        verify(userRepository).existsByUsername(username);
+        verify(passwordEncoder).encode(raw);
+        verify(userRepository).save(any(User.class));
     }
 }

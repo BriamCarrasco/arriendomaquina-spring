@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -58,7 +59,8 @@ class JsonAccessDeniedHandlerTest {
         assertNotNull(json);
 
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> body = mapper.readValue(json, Map.class);
+        Map<String, Object> body = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        });
 
         assertEquals(403, body.get("status"));
         assertEquals("Forbidden", body.get("error"));
@@ -102,7 +104,8 @@ class JsonAccessDeniedHandlerTest {
 
         String json = baos.toString("UTF-8");
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> body = mapper.readValue(json, Map.class);
+        Map<String, Object> body = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        });
 
         assertEquals("Acceso denegado", body.get("message"));
     }
