@@ -17,10 +17,10 @@
         <a
           sec:authorize="isAuthenticated()"
           th:href="@{/logout}"
-          class="btn btn-outline"
+          class="btn-action btn-action-outline"
           >Cerrar sesión</a
         >
-        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn-action"
           >Iniciar sesión</a
         >
       </div>
@@ -82,7 +82,7 @@
           </div>
 
           <div class="col-12 text-center">
-            <button type="submit" class="btn">Registrarse</button>
+            <button type="submit" class="btn-action">Registrarse</button>
           </div>
         </form>
         <p class="mt-3 text-center">

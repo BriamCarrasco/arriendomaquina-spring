@@ -1,5 +1,7 @@
 package com.briamcarrasco.arriendomaquinaria.service;
 
+import java.util.List;
+
 import com.briamcarrasco.arriendomaquinaria.model.User;
 
 /**
@@ -20,6 +22,8 @@ public interface UserService {
      */
     User createUser(String username, String password, String email);
 
+    User adminCreate(String username, String password, String email, String role);
+
     /**
      * Busca un usuario por su nombre de usuario.
      *
@@ -27,4 +31,12 @@ public interface UserService {
      * @return el usuario encontrado o {@code null} si no existe
      */
     User findByUsername(String username);
+
+    User findById(Long id);
+
+    User updateUser(Long id, String username, String email);
+
+    User deleteUser(Long id);
+
+    List<User> getAllUsers();
 }

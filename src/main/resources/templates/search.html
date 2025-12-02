@@ -31,9 +31,9 @@
             th:name="${_csrf.parameterName}"
             th:value="${_csrf.token}"
           />
-          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+          <button type="submit" class="btn-action btn-action-outline">Cerrar sesión</button>
         </form>
-        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn-action"
           >Iniciar sesión</a
         >
       </div>
@@ -124,7 +124,7 @@
           </div>
 
           <div class="col-md-1 text-end">
-            <button type="submit" class="btn">Buscar</button>
+            <button type="submit" class="btn-action">Buscar</button>
           </div>
         </div>
       </form>
@@ -165,14 +165,14 @@
                 <th:block sec:authorize="isAuthenticated()">
                   <a
                     th:href="@{/machinerydetail(id=${maq.id})}"
-                    class="btn btn-outline-primary"
+                    class="btn-action btn-action-outline"
                     >Ver más información</a
                   >
                 </th:block>
                 <th:block sec:authorize="isAnonymous()">
                   <a
                     th:href="@{/public/machinerydetail(id=${maq.id})}"
-                    class="btn btn-outline-primary"
+                    class="btn-action btn-action-outline"
                     >Ver más información</a
                   >
                 </th:block>

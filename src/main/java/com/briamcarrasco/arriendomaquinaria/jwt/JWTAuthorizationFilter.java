@@ -85,7 +85,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      */
     private Claims parseClaims(String rawToken) {
         return Jwts.parser()
-                .verifyWith(getSigningKey(SUPER_SECRET_KEY))
+                .verifyWith(getSigningKey(JWT_SECRET_KEY))
                 .build()
                 .parseSignedClaims(rawToken)
                 .getPayload();

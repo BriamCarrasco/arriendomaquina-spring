@@ -40,7 +40,7 @@ public class JWTAuthtenticationConfig {
                                 .subject(username)
                                 .issuedAt(new Date(System.currentTimeMillis()))
                                 .expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
-                                .signWith(getSigningKey(SUPER_SECRET_KEY))
+                                .signWith(getSigningKey(JWT_SECRET_KEY))
                                 .compact();
 
                 return TOKEN_BEARER_PREFIX + token;

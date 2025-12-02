@@ -13,6 +13,7 @@ import java.util.Date;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Componente que inicializa datos de ejemplo en la base de datos al iniciar la
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
  * Lombok.
  */
 @Component
+@Profile("!test")
 @SuppressWarnings("sonar")
 public class DataInitializer implements CommandLineRunner {
 

@@ -9,6 +9,7 @@
     <meta charset="UTF-8" />
     <title>Inicio | Arriendo de Maquinaria</title>
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/bootstrap.min.css" />
   </head>
   <body>
     <nav class="navbar-app" aria-label="Navegación principal">
@@ -21,31 +22,27 @@
           th:action="@{/logout}"
           method="post"
           sec:authorize="isAuthenticated()"
-          style="display: inline"
         >
           <input
             type="hidden"
             th:name="${_csrf.parameterName}"
             th:value="${_csrf.token}"
           />
-          <button type="submit" class="btn btn-outline">Cerrar sesión</button>
+          <button type="submit" class="btn-action btn-action-outline">Cerrar sesión</button>
         </form>
-        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn"
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn-action"
           >Iniciar sesión</a
         >
       </div>
     </nav>
 
     <main class="container-app">
-      <h1 id="bienvenida" th:text="|Bienvenido a ${name}!|">
-        Bienvenido a la plataforma
+      <h1 id="bienvenida" th:text="|Bienvenido!|">
+        Bienvenido
       </h1>
-      <h2 id="seguridad">Plataforma segura con Spring Security</h2>
-
-      <!-- 🔒 Contenido visible solo si está autenticado -->
       <div sec:authorize="isAuthenticated()">
         <div class="section-title">
-          <span class="badge badge-info">Inicio</span>
+          <span class="badge-p badge-info-p">Inicio</span>
           <strong id="acciones-rapidas">Acciones rápidas</strong>
         </div>
 
@@ -55,7 +52,7 @@
             <h4 id="buscar-maquinaria">Buscar maquinaria</h4>
             <p>Explora equipos disponibles por nombre, categoría o estado.</p>
             <div class="actions">
-              <a th:href="@{/search}" class="btn">Ir a búsqueda</a>
+              <a th:href="@{/search}" class="btn-action">Ir a búsqueda</a>
             </div>
           </div>
 
@@ -69,7 +66,7 @@
             <div class="actions">
               <a
                 th:href="@{/postmachinery}"
-                class="btn"
+                class="btn-action"
                 sec:authorize="hasAnyRole('OWNER','ADMIN')"
                 >Publicar</a
               >
@@ -90,12 +87,12 @@
             <p>Gestiona usuarios, auditorías y estados de publicación.</p>
             <div class="actions">
               <a
-                th:href="@{/admin/panel}"
-                class="btn btn-outline"
+                th:href="@{/adminpanel}"
+                class="btn-action btn-action-outline"
                 sec:authorize="hasRole('ADMIN')"
                 >Abrir panel</a
               >
-              <span class="badge badge-info" sec:authorize="!hasRole('ADMIN')"
+              <span class="badge-p badge-info-p" sec:authorize="!hasRole('ADMIN')"
                 >Solo administradores</span
               >
             </div>
@@ -106,7 +103,7 @@
             <h4 id="resumen">Resumen</h4>
             <p>Consulta el estado general de tus operaciones.</p>
             <div class="actions">
-              <span class="badge badge-success">Activo</span>
+              <span class="badge-p badge-success-p">Activo</span>
             </div>
           </div>
 
@@ -117,7 +114,7 @@
             <div class="actions">
               <button
                 type="button"
-                class="btn btn-outline"
+                class="btn-action btn-action-outline"
                 onclick="return false;"
                 aria-disabled="true"
               >
@@ -129,7 +126,7 @@
 
         <!-- 🧱 Nueva sección: listado de maquinarias -->
         <div class="section-title section-spacing">
-          <span class="badge badge-info">Inventario</span>
+          <span class="badge-p badge-info-p">Inventario</span>
           <strong id="maquinaria-disponible">Maquinaria disponible</strong>
         </div>
 
@@ -167,11 +164,11 @@
       <!-- 🚫 Invitación para usuarios anónimos -->
       <div sec:authorize="isAnonymous()">
         <div class="section-title">
-          <span class="badge badge-info">Acceso</span>
+          <span class="badge-p badge-info-p">Acceso</span>
           <strong id="zona-privada">Zona privada</strong>
         </div>
         <p>Inicia sesión para acceder a las funciones de la plataforma.</p>
-        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+        <a th:href="@{/login}" class="btn-action">Iniciar sesión</a>
       </div>
     </main>
   </body>

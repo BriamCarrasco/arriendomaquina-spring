@@ -63,11 +63,11 @@ public class WebSecurityConfig {
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
                                                 .ignoringRequestMatchers("/logout",
-                                                                "/api/reviews/**",
-                                                                "/api/machinery-media/**"))
+                                                                "/auth/login"))
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jsonAccessDeniedHandler))
-                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/landing", "/login", "/auth/login",
                                                                 "/css/**", "/js/**", "/images/**", "/webjars/**",
@@ -138,8 +138,9 @@ public class WebSecurityConfig {
         public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
                 CookieCsrfTokenRepository repo = new CookieCsrfTokenRepository();
                 repo.setCookieCustomizer(builder -> builder
-                                .httpOnly(false)
-                                .sameSite("Strict")
+                                .httpOnly(false) // obligatorio para que el form pueda leerlo
+                                .sameSite("Lax") // Strict rompe POST, mantenlo así
+                                .secure(false) // IMPORTANTE EN LOCAL o Chrome NO guarda la cookie
                                 .path("/"));
                 return repo;
         }
