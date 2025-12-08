@@ -8,159 +8,167 @@ import com.briamcarrasco.arriendomaquinaria.repository.UserRepository;
 import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 import com.briamcarrasco.arriendomaquinaria.service.ReviewService;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(ReviewController.class)
-@Import(ReviewControllerTest.TestConfig.class)
 class ReviewControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
+    @Mock
     private ReviewService reviewService;
 
-    @Autowired
+    @Mock
     private MachineryService machineryService;
 
-    @Autowired
+    @Mock
     private UserRepository userRepository;
 
-    @Autowired
-    private ReviewController reviewController;
+    @Mock
+    private Authentication authentication;
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public ReviewService reviewService() {
-            return Mockito.mock(ReviewService.class);
-        }
+    @InjectMocks
+    private ReviewController controller;
 
-        @Bean
-        public MachineryService machineryService() {
-            return Mockito.mock(MachineryService.class);
-        }
-
-        @Bean
-        public UserRepository userRepository() {
-            return Mockito.mock(UserRepository.class);
-        }
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
+    // -------------------------------------------------------------
+    // GET REVIEWS BY MACHINERY
+    // -------------------------------------------------------------
+
     @Test
-    @WithMockUser
-    void getReviewsByMachinery_retornaLista200() throws Exception {
+    void getReviewsByMachinery_returnsListOk() {
         Review review = new Review();
         review.setId(1L);
+        when(reviewService.getReviewsByMachinery(10L)).thenReturn(List.of(review));
 
-        Mockito.when(reviewService.getReviewsByMachinery(10L))
-                .thenReturn(List.of(review));
+        ResponseEntity<List<Review>> response = controller.getReviewsByMachinery(10L);
 
-        mockMvc.perform(get("/api/reviews/machinery/10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1));
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(1, response.getBody().size());
+        assertEquals(1L, response.getBody().get(0).getId());
+    }
+
+    // -------------------------------------------------------------
+    // GET AVERAGE RATING
+    // -------------------------------------------------------------
+
+    @Test
+    void getAverageRating_returnsOk() {
+        when(reviewService.getAverageRating(5L)).thenReturn(4.5);
+
+        ResponseEntity<Double> response = controller.getAverage(5L);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(4.5, response.getBody());
+    }
+
+    // -------------------------------------------------------------
+    // UPSERT REVIEW
+    // -------------------------------------------------------------
+
+    @Test
+    void upsertReview_authenticationNull_returns401() {
+        ReviewRequest request = new ReviewRequest();
+        request.setRating(5);
+        request.setComment("Test");
+
+        ResponseEntity<Object> response = controller.upsertReview(1L, request, null);
+
+        assertEquals(401, response.getStatusCode().value());
+        assertEquals("No autenticado", response.getBody());
     }
 
     @Test
-    @WithMockUser
-    void getAverageRating_retorna200() throws Exception {
-        Mockito.when(reviewService.getAverageRating(5L)).thenReturn(4.5);
+    void upsertReview_notAuthenticated_returns401() {
+        when(authentication.isAuthenticated()).thenReturn(false);
 
-        mockMvc.perform(get("/api/reviews/machinery/5/average"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("4.5"));
+        ReviewRequest request = new ReviewRequest();
+        request.setRating(5);
+        request.setComment("Test");
+
+        ResponseEntity<Object> response = controller.upsertReview(1L, request, authentication);
+
+        assertEquals(401, response.getStatusCode().value());
+        assertEquals("No autenticado", response.getBody());
     }
 
     @Test
-    void upsertReview_sinAutenticacion_retorna401() throws Exception {
-        mockMvc.perform(post("/api/reviews/machinery/8")
-                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
-                        .user("user").roles("USER"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"rating\":5,\"comment\":\"Bien\"}"))
-                // Sin CSRF en POST -> 403 por protección CSRF
-                .andExpect(status().isForbidden());
+    void upsertReview_machineryNotFound_returns404() {
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(machineryService.findById(8L)).thenReturn(Optional.empty());
+
+        ReviewRequest request = new ReviewRequest();
+        request.setRating(4);
+        request.setComment("ok");
+
+        ResponseEntity<Object> response = controller.upsertReview(8L, request, authentication);
+
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Maquinaria no encontrada", response.getBody());
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void upsertReview_maquinariaNoExiste_404() {
-        Mockito.when(machineryService.findById(8L)).thenReturn(Optional.empty());
-        ReviewRequest body = new ReviewRequest();
-        body.setRating(4);
-        body.setComment("ok");
-        var auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                "user", "pwd",
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER"));
-        var resp = reviewController.upsertReview(8L, body, auth);
-        org.assertj.core.api.Assertions.assertThat(resp.getStatusCode().value()).isEqualTo(404);
-        org.assertj.core.api.Assertions.assertThat(resp.getBody()).isEqualTo("Maquinaria no encontrada");
+    void upsertReview_userNotFound_returns404() {
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("ghost");
+        when(machineryService.findById(1L)).thenReturn(Optional.of(new Machinery()));
+        when(userRepository.findByUsername("ghost")).thenReturn(null);
+
+        ReviewRequest request = new ReviewRequest();
+        request.setRating(5);
+        request.setComment("todo bien");
+
+        ResponseEntity<Object> response = controller.upsertReview(1L, request, authentication);
+
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Usuario no encontrado", response.getBody());
     }
 
     @Test
-    @WithMockUser(username = "ghost", roles = "USER")
-    void upsertReview_usuarioNoExiste_404() {
-        Mockito.when(machineryService.findById(1L)).thenReturn(Optional.of(new Machinery()));
-        Mockito.when(userRepository.findByUsername("ghost")).thenReturn(null);
-        ReviewRequest body = new ReviewRequest();
-        body.setRating(5);
-        body.setComment("todo bien");
-        var auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                "ghost", "pwd",
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER"));
-        var resp = reviewController.upsertReview(1L, body, auth);
-        org.assertj.core.api.Assertions.assertThat(resp.getStatusCode().value()).isEqualTo(404);
-        org.assertj.core.api.Assertions.assertThat(resp.getBody()).isEqualTo("Usuario no encontrado");
-    }
-
-    @Test
-    @WithMockUser(username = "briam", roles = "USER")
-    void upsertReview_exitoso_200() {
-        Mockito.when(machineryService.findById(2L)).thenReturn(Optional.of(new Machinery()));
+    @SuppressWarnings("unchecked")
+    void upsertReview_success_returns200WithPayload() {
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn("briam");
+        when(machineryService.findById(2L)).thenReturn(Optional.of(new Machinery()));
 
         User user = new User();
         user.setId(10L);
         user.setUsername("briam");
-        Mockito.when(userRepository.findByUsername("briam")).thenReturn(user);
+        when(userRepository.findByUsername("briam")).thenReturn(user);
 
         Review review = new Review();
         review.setId(99L);
         review.setRating(5);
         review.setComment("Excelente!");
+        when(reviewService.upsertReview(2L, 10L, 5, "Excelente!")).thenReturn(review);
+        when(reviewService.getAverageRating(2L)).thenReturn(4.8);
 
-        Mockito.when(reviewService.upsertReview(2L, 10L, 5, "Excelente!")).thenReturn(review);
-        Mockito.when(reviewService.getAverageRating(2L)).thenReturn(4.8);
+        ReviewRequest request = new ReviewRequest();
+        request.setRating(5);
+        request.setComment("Excelente!");
 
-        ReviewRequest body = new ReviewRequest();
-        body.setRating(5);
-        body.setComment("Excelente!");
-        var auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                "briam", "pwd",
-                org.springframework.security.core.authority.AuthorityUtils.createAuthorityList("ROLE_USER"));
-        var resp = reviewController.upsertReview(2L, body, auth);
-        org.assertj.core.api.Assertions.assertThat(resp.getStatusCode().value()).isEqualTo(200);
-        @SuppressWarnings("unchecked")
-        java.util.Map<String, Object> payload = (java.util.Map<String, Object>) resp.getBody();
-        org.assertj.core.api.Assertions.assertThat(payload)
-                .containsEntry("id", 99L)
-                .containsEntry("rating", 5)
-                .containsEntry("comment", "Excelente!")
-                .containsEntry("user", "briam")
-                .containsEntry("averageRating", 4.8);
+        ResponseEntity<Object> response = controller.upsertReview(2L, request, authentication);
+
+        assertEquals(200, response.getStatusCode().value());
+        Map<String, Object> payload = (Map<String, Object>) response.getBody();
+        assertEquals(99L, payload.get("id"));
+        assertEquals(5, payload.get("rating"));
+        assertEquals("Excelente!", payload.get("comment"));
+        assertEquals("briam", payload.get("user"));
+        assertEquals(4.8, payload.get("averageRating"));
     }
 }

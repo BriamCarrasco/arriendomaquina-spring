@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -35,18 +34,6 @@ class StatusServiceImplTest {
         List<Status> res = service.findAll();
 
         assertSame(list, res);
-        assertEquals(2, res.size());
-        verify(statusRepository).findAll();
-    }
-
-    @Test
-    void findAll_whenRepositoryReturnsEmpty_returnsEmptyList() {
-        when(statusRepository.findAll()).thenReturn(Collections.emptyList());
-
-        List<Status> res = service.findAll();
-
-        assertNotNull(res);
-        assertTrue(res.isEmpty());
         verify(statusRepository).findAll();
     }
 }

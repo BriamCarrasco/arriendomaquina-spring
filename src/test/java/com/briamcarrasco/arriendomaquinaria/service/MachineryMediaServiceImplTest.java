@@ -126,7 +126,7 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
-                            //ignore
+                            // ignore
                         }
                     });
         }
@@ -148,6 +148,17 @@ class MachineryMediaServiceImplTest {
         when(bad.getContentType()).thenReturn("application/pdf");
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> service.addImageFile(1L, bad));
+        assertEquals("Tipo de archivo no permitido", ex.getMessage());
+    }
+
+    @Test
+    void addImageFile_withNullContentType_throws() {
+        MultipartFile badNull = mock(MultipartFile.class);
+        when(badNull.isEmpty()).thenReturn(false);
+        when(badNull.getContentType()).thenReturn(null);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.addImageFile(1L, badNull));
         assertEquals("Tipo de archivo no permitido", ex.getMessage());
     }
 
@@ -175,7 +186,7 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
-                            //ignore
+                            // ignore
                         }
                     });
         }
@@ -216,7 +227,7 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
-                            //ignore
+                            // ignore
                         }
                     });
         }
@@ -252,7 +263,7 @@ class MachineryMediaServiceImplTest {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException ignored) {
-                            //ignore
+                            // ignore
                         }
                     });
         }
