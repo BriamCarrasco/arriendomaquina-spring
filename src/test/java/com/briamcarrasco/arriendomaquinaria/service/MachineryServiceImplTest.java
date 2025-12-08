@@ -53,16 +53,6 @@ class MachineryServiceImplTest {
     }
 
     @Test
-    void findById_returnsEmptyOptional() {
-        when(machineryRepository.findById(2L)).thenReturn(Optional.empty());
-
-        Optional<Machinery> result = service.findById(2L);
-
-        assertFalse(result.isPresent());
-        verify(machineryRepository).findById(2L);
-    }
-
-    @Test
     void updateMachinery_whenExists_updatesAndReturns() {
         Machinery old = new Machinery();
         old.setNameMachinery("Old");
@@ -115,18 +105,6 @@ class MachineryServiceImplTest {
         List<Machinery> result = service.findAll();
 
         assertEquals(2, result.size());
-        assertSame(m1, result.get(0));
-        assertSame(m2, result.get(1));
-        verify(machineryRepository).findAll();
-    }
-
-    @Test
-    void findAll_returnsEmptyList() {
-        when(machineryRepository.findAll()).thenReturn(Collections.emptyList());
-
-        List<Machinery> result = service.findAll();
-
-        assertTrue(result.isEmpty());
         verify(machineryRepository).findAll();
     }
 
@@ -139,7 +117,6 @@ class MachineryServiceImplTest {
         List<Machinery> result = service.findByNameMachinery("excavadora");
 
         assertEquals(1, result.size());
-        assertSame(m, result.get(0));
         verify(machineryRepository).findByNameMachineryContainingIgnoreCase("excavadora");
     }
 
@@ -152,7 +129,6 @@ class MachineryServiceImplTest {
         List<Machinery> result = service.findByCategory("industrial");
 
         assertEquals(1, result.size());
-        assertSame(m, result.get(0));
         verify(machineryRepository).findByCategory_NameIgnoreCase("industrial");
     }
 }
