@@ -1,24 +1,29 @@
 package com.briamcarrasco.arriendomaquinaria.service;
 
-import com.briamcarrasco.arriendomaquinaria.model.Machinery;
-import com.briamcarrasco.arriendomaquinaria.model.Category;
-import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.briamcarrasco.arriendomaquinaria.model.Category;
+import com.briamcarrasco.arriendomaquinaria.model.Machinery;
+import com.briamcarrasco.arriendomaquinaria.repository.MachineryRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MachineryServiceImplTest {
@@ -130,5 +135,63 @@ class MachineryServiceImplTest {
 
         assertEquals(1, result.size());
         verify(machineryRepository).findByCategory_NameIgnoreCase("industrial");
+    }
+
+    @Test
+    void createMachinery_withNullMachinery_shouldHandleGracefully() {
+        when(machineryRepository.save(null)).thenReturn(null);
+
+        Machinery result = service.createMachinery(null);
+
+        assertNull(result);
+        verify(machineryRepository).save(null);
+    }
+
+    @Test
+    void findById_whenNotExists_returnsEmptyOptional() {
+        when(machineryRepository.findById(999L)).thenReturn(Optional.empty());
+
+        Optional<Machinery> result = service.findById(999L);
+
+        assertFalse(result.isPresent());
+        verify(machineryRepository).findById(999L);
+    }
+
+    @Test
+    void findAll_whenRepositoryReturnsEmpty_returnsEmptyList() {
+        when(machineryRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<Machinery> result = service.findAll();
+
+        assertTrue(result.isEmpty());
+        verify(machineryRepository).findAll();
+    }
+
+    @Test
+    void findByNameMachinery_withEmptyString_returnsEmptyList() {
+        when(machineryRepository.findByNameMachineryContainingIgnoreCase(""))
+                .thenReturn(Collections.emptyList());
+
+        List<Machinery> result = service.findByNameMachinery("");
+
+        assertTrue(result.isEmpty());
+        verify(machineryRepository).findByNameMachineryContainingIgnoreCase("");
+    }
+
+    @Test
+    void findByCategory_whenNoMatches_returnsEmptyList() {
+        when(machineryRepository.findByCategory_NameIgnoreCase("inexistente"))
+                .thenReturn(Collections.emptyList());
+
+        List<Machinery> result = service.findByCategory("inexistente");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void deleteMachinery_withNegativeId_shouldStillCallRepository() {
+        service.deleteMachinery(-1L);
+        
+        verify(machineryRepository).deleteById(-1L);
     }
 }
