@@ -1,24 +1,31 @@
 package com.briamcarrasco.arriendomaquinaria.controller;
 
-import com.briamcarrasco.arriendomaquinaria.model.Machinery;
-import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import com.briamcarrasco.arriendomaquinaria.model.Machinery;
+import com.briamcarrasco.arriendomaquinaria.service.MachineryService;
 
 class AdminMachineryControllerTest {
 
@@ -247,5 +254,68 @@ class AdminMachineryControllerTest {
 
         assertEquals("/images/Case_IH_Axial-Flow.png", captor.getValue().getImageUrl());
         assertEquals("redirect:/home", result);
+    }
+
+    @Test
+    void createMachinery_WithNullName_ShouldStillCreate() {
+        when(multipartFile.isEmpty()).thenReturn(true);
+
+        String result = controller.createMachinery(
+                null, 1L, "Disponible",
+                new BigDecimal("1000"), multipartFile);
+
+        verify(machineryService).createMachinery(any(Machinery.class));
+        assertEquals("redirect:/home", result);
+    }
+
+    @Test
+    void createMachinery_WithNegativePrice_ShouldStillCreate() {
+        when(multipartFile.isEmpty()).thenReturn(true);
+
+        String result = controller.createMachinery(
+                "Test", 1L, "Disponible",
+                new BigDecimal("-100"), multipartFile);
+
+        verify(machineryService).createMachinery(any(Machinery.class));
+        assertEquals("redirect:/home", result);
+    }
+
+    @Test
+    void findById_WithNegativeId_ShouldReturnNotFound() {
+        when(machineryService.findById(-1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<Machinery> resp = controller.findById(-1L);
+
+        assertEquals(404, resp.getStatusCode().value());
+    }
+
+    @Test
+    void buscarMaquinaria_WithEmptyName_ReturnsEmptyList() {
+        String view = controller.buscarMaquinaria(
+                "", null, "nombre", model);
+
+        verify(model).addAttribute("maquinarias", List.of());
+        assertEquals("search", view);
+    }
+
+    @Test
+    void findAll_WhenServiceReturnsEmpty_ShouldReturnEmptyList() {
+        when(machineryService.findAll()).thenReturn(List.of());
+
+        ResponseEntity<List<Machinery>> response = controller.findAll();
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().isEmpty());
+    }
+
+    @Test
+    void updateMachinery_WithNullMachinery_ShouldHandleGracefully() {
+        when(machineryService.updateMachinery(eq(1L), any()))
+                .thenThrow(new RuntimeException("Null machinery"));
+
+        ResponseEntity<Machinery> resp = controller.updateMachinery(1L, null);
+
+        assertEquals(404, resp.getStatusCode().value());
     }
 }

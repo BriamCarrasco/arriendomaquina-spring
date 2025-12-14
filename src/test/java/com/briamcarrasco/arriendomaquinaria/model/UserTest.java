@@ -1,11 +1,15 @@
 package com.briamcarrasco.arriendomaquinaria.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Collection;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 class UserTest {
 
@@ -95,5 +99,61 @@ class UserTest {
     @Test
     void roleEnum_containsAdminConstant() {
         assertNotNull(User.Role.ADMIN);
+    }
+
+    @Test
+    void setUsername_withNullValue_shouldAcceptNull() {
+        User u = new User();
+        u.setUsername(null);
+        assertNull(u.getUsername());
+    }
+
+    @Test
+    void setEmail_withEmptyString_shouldAcceptEmpty() {
+        User u = new User();
+        u.setEmail("");
+        assertEquals("", u.getEmail());
+    }
+
+    @Test
+    void getAuthorities_withNullRole_shouldThrowException() {
+        User u = new User();
+        u.setRole(null);
+        Exception ex = assertThrows(NullPointerException.class, () -> u.getAuthorities());
+        assertNotNull(ex);
+    }
+
+    @Test
+    void equals_withSameData_shouldReturnTrue() {
+        User u1 = new User();
+        u1.setId(1L);
+        u1.setUsername("test");
+        u1.setEmail("test@test.com");
+
+        User u2 = new User();
+        u2.setId(1L);
+        u2.setUsername("test");
+        u2.setEmail("test@test.com");
+
+        assertEquals(u1, u2);
+    }
+
+    @Test
+    void hashCode_withSameData_shouldBeSame() {
+        User u1 = new User();
+        u1.setId(1L);
+        u1.setUsername("test");
+
+        User u2 = new User();
+        u2.setId(1L);
+        u2.setUsername("test");
+
+        assertEquals(u1.hashCode(), u2.hashCode());
+    }
+
+    @Test
+    void roleEnum_valueOf_shouldWorkCorrectly() {
+        assertEquals(User.Role.USER, User.Role.valueOf("USER"));
+        assertEquals(User.Role.ADMIN, User.Role.valueOf("ADMIN"));
     }
 }
