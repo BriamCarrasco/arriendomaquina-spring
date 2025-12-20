@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,9 @@ import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.*;
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     /**
      * Determina si la petición no debe ser filtrada por el JWT.
@@ -85,7 +89,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      */
     private Claims parseClaims(String rawToken) {
         return Jwts.parser()
-                .verifyWith(getSigningKey(JWT_SECRET_KEY))
+                .verifyWith(getSigningKey(jwtSecret))
                 .build()
                 .parseSignedClaims(rawToken)
                 .getPayload();

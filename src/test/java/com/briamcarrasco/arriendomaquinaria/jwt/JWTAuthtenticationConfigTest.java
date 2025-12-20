@@ -3,75 +3,83 @@ package com.briamcarrasco.arriendomaquinaria.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class JWTAuthtenticationConfigTest {
 
-    private final JWTAuthtenticationConfig config = new JWTAuthtenticationConfig();
+        @Autowired
+        private JWTAuthtenticationConfig config;
 
-    @Test
-    void getJWTToken_debeGenerarTokenConPrefijoBearerYClaimsCorrectos() {
-        String username = "user@test.com";
-        String role = "ROLE_ADMIN";
+        @Value("${jwt.secret}")
+        private String jwtSecret;
 
-        String result = config.getJWTToken(username, role);
+        @Test
+        void getJWTToken_debeGenerarTokenConPrefijoBearerYClaimsCorrectos() {
+                String username = "user@test.com";
+                String role = "ROLE_ADMIN";
 
-        // 1) Prefijo
-        assertThat(result).startsWith(Constants.TOKEN_BEARER_PREFIX);
+                String result = config.getJWTToken(username, role);
 
-        String rawToken = result.substring(Constants.TOKEN_BEARER_PREFIX.length());
+                // 1) Prefijo
+                assertThat(result).startsWith(Constants.TOKEN_BEARER_PREFIX);
 
-        // 2) Parsear token y revisar claims
-        Claims claims = Jwts.parser()
-                .verifyWith(Constants.getSigningKey(Constants.JWT_SECRET_KEY))
-                .build()
-                .parseSignedClaims(rawToken)
-                .getPayload();
+                String rawToken = result.substring(Constants.TOKEN_BEARER_PREFIX.length());
 
-        // subject
-        assertThat(claims.getSubject()).isEqualTo(username);
+                // 2) Parsear token y revisar claims
+                Claims claims = Jwts.parser()
+                                .verifyWith(Constants.getSigningKey(jwtSecret))
+                                .build()
+                                .parseSignedClaims(rawToken)
+                                .getPayload();
 
-        // authorities
-        Object authoritiesObj = claims.get("authorities");
-        assertThat(authoritiesObj).isInstanceOf(List.class);
+                // subject
+                assertThat(claims.getSubject()).isEqualTo(username);
 
-        @SuppressWarnings("unchecked")
-        List<String> authorities = (List<String>) authoritiesObj;
-        assertThat(authorities).containsExactly("ROLE_ADMIN");
+                // authorities
+                Object authoritiesObj = claims.get("authorities");
+                assertThat(authoritiesObj).isInstanceOf(List.class);
 
-        // issuedAt y expiration
-        Date issuedAt = claims.getIssuedAt();
-        Date expiration = claims.getExpiration();
-        assertThat(issuedAt).isNotNull();
-        assertThat(expiration).isNotNull();
-        assertThat(expiration.getTime())
-                .isGreaterThan(issuedAt.getTime());
+                @SuppressWarnings("unchecked")
+                List<String> authorities = (List<String>) authoritiesObj;
+                assertThat(authorities).containsExactly("ROLE_ADMIN");
 
-        // expiración consistente con TOKEN_EXPIRATION_TIME (tolerancia de 1s)
-        long diff = expiration.getTime() - issuedAt.getTime();
-        assertThat(diff)
-                .isBetween(Constants.TOKEN_EXPIRATION_TIME - 1000,
-                        Constants.TOKEN_EXPIRATION_TIME + 1000);
-    }
+                // issuedAt y expiration
+                Date issuedAt = claims.getIssuedAt();
+                Date expiration = claims.getExpiration();
+                assertThat(issuedAt).isNotNull();
+                assertThat(expiration).isNotNull();
+                assertThat(expiration.getTime())
+                                .isGreaterThan(issuedAt.getTime());
 
-    @Test
-    void getJWTToken_funcionaConOtroRol() {
-        String result = config.getJWTToken("otro@user.cl", "ROLE_USER");
-        assertThat(result).startsWith(Constants.TOKEN_BEARER_PREFIX);
+                // expiración consistente con TOKEN_EXPIRATION_TIME (tolerancia de 1s)
+                long diff = expiration.getTime() - issuedAt.getTime();
+                assertThat(diff)
+                                .isBetween(Constants.TOKEN_EXPIRATION_TIME - 1000,
+                                                Constants.TOKEN_EXPIRATION_TIME + 1000);
+        }
 
-        String rawToken = result.substring(Constants.TOKEN_BEARER_PREFIX.length());
-        Claims claims = Jwts.parser()
-                .verifyWith(Constants.getSigningKey(Constants.JWT_SECRET_KEY))
-                .build()
-                .parseSignedClaims(rawToken)
-                .getPayload();
+        @Test
+        void getJWTToken_funcionaConOtroRol() {
+                String result = config.getJWTToken("otro@user.cl", "ROLE_USER");
+                assertThat(result).startsWith(Constants.TOKEN_BEARER_PREFIX);
 
-        @SuppressWarnings("unchecked")
-        List<String> authorities = (List<String>) claims.get("authorities");
-        assertThat(authorities).containsExactly("ROLE_USER");
-    }
+                String rawToken = result.substring(Constants.TOKEN_BEARER_PREFIX.length());
+                Claims claims = Jwts.parser()
+                                .verifyWith(Constants.getSigningKey(jwtSecret))
+                                .build()
+                                .parseSignedClaims(rawToken)
+                                .getPayload();
+
+                @SuppressWarnings("unchecked")
+                List<String> authorities = (List<String>) claims.get("authorities");
+                assertThat(authorities).containsExactly("ROLE_USER");
+        }
 }

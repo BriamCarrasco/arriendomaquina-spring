@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class AuthController {
 
-
     private final JWTAuthtenticationConfig jwtAuthtenticationConfig;
     private final MyUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -37,10 +36,6 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
     }
-
-
-
-
 
     /**
      * Sanitiza el valor para evitar CRLF injection.
@@ -59,12 +54,12 @@ public class AuthController {
 
         response.setHeader("XSRF-TOKEN", sanitizeForHeader(token.getToken()));
 
-
         Cookie cookie = new Cookie("XSRF-TOKEN", token.getToken());
-        cookie.setHttpOnly(false); // necesario para que el HTML pueda leerlo
+        cookie.setHttpOnly(true); // Protegido con HttpOnly
         cookie.setSecure(false); // true sólo si usas HTTPS
         cookie.setPath("/");
         cookie.setMaxAge(-1); // session cookie
+        cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
     }
 
@@ -98,6 +93,7 @@ public class AuthController {
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(86400);
+            cookie.setAttribute("SameSite", "Lax");
             response.addCookie(cookie);
 
             // === 🔥 REGENERAR CSRF TOKEN DESPUÉS DE LOGIN ===

@@ -119,7 +119,7 @@ class UserTest {
     void getAuthorities_withNullRole_shouldThrowException() {
         User u = new User();
         u.setRole(null);
-        Exception ex = assertThrows(NullPointerException.class, () -> u.getAuthorities());
+        Exception ex = assertThrows(NullPointerException.class, u::getAuthorities);
         assertNotNull(ex);
     }
 

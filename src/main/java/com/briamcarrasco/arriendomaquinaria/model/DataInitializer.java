@@ -26,8 +26,20 @@ import org.springframework.context.annotation.Profile;
  */
 @Component
 @Profile("!test")
-@SuppressWarnings("sonar")
 public class DataInitializer implements CommandLineRunner {
+
+     // Constantes para evitar duplicación de literales
+     private static final String STATUS_DISPONIBLE = "disponible";
+     private static final String STATUS_ARRENDADA = "arrendada";
+     private static final String CATEGORY_TRACTORES = "Tractores";
+     private static final String CATEGORY_COSECHADORAS = "Cosechadoras";
+     private static final String USERNAME_ADMIN = "admin";
+     private static final String USERNAME_USER1 = "user1";
+     private static final String USERNAME_USER2 = "user2";
+     private static final String DEFAULT_PASSWORD = "password";
+     private static final String MACHINERY_JOHN_DEERE = "John Deere 5075E Tractor";
+     private static final String MACHINERY_CASE_IH = "Case IH Axial-Flow 7150 Combine";
+     private static final String MACHINERY_NEW_HOLLAND = "New Holland CR8.90 Combine";
 
      private final UserRepository userRepository;
 
@@ -58,92 +70,92 @@ public class DataInitializer implements CommandLineRunner {
 
      @Override
      public void run(String... args) {
-          Status disponible = statusRepository.findByName("disponible");
+          Status disponible = statusRepository.findByName(STATUS_DISPONIBLE);
           if (disponible == null) {
                disponible = new Status();
-               disponible.setName("disponible");
+               disponible.setName(STATUS_DISPONIBLE);
                statusRepository.save(disponible);
           }
-          Status arrendada = statusRepository.findByName("arrendada");
+          Status arrendada = statusRepository.findByName(STATUS_ARRENDADA);
           if (arrendada == null) {
                arrendada = new Status();
-               arrendada.setName("arrendada");
+               arrendada.setName(STATUS_ARRENDADA);
                statusRepository.save(arrendada);
           }
 
-          Category tractores = categoryRepository.findByName("Tractores");
+          Category tractores = categoryRepository.findByName(CATEGORY_TRACTORES);
           if (tractores == null) {
                tractores = new Category();
-               tractores.setName("Tractores");
+               tractores.setName(CATEGORY_TRACTORES);
                tractores.setDescription("Maquinaria para labores de tiro y transporte");
                categoryRepository.save(tractores);
           }
-          Category cosechadoras = categoryRepository.findByName("Cosechadoras");
+          Category cosechadoras = categoryRepository.findByName(CATEGORY_COSECHADORAS);
           if (cosechadoras == null) {
                cosechadoras = new Category();
-               cosechadoras.setName("Cosechadoras");
+               cosechadoras.setName(CATEGORY_COSECHADORAS);
                cosechadoras.setDescription("Maquinaria para cosecha de granos");
                categoryRepository.save(cosechadoras);
           }
 
-          if (userRepository.findByUsername("admin") == null) {
+          if (userRepository.findByUsername(USERNAME_ADMIN) == null) {
                User admin = new User();
-               admin.setUsername("admin");
+               admin.setUsername(USERNAME_ADMIN);
                admin.setEmail("admin@demo.com");
-               admin.setPassword(passwordEncoder.encode("password"));
+               admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
                admin.setRole(Role.ADMIN);
                userRepository.save(admin);
                createUserInfo(admin, "Ana", "Admin", "+56911111111", "Av. Central 123", "Santiago", "Chile");
           }
-          if (userRepository.findByUsername("user1") == null) {
+          if (userRepository.findByUsername(USERNAME_USER1) == null) {
                User user1 = new User();
-               user1.setUsername("user1");
+               user1.setUsername(USERNAME_USER1);
                user1.setEmail("user1@demo.com");
-               user1.setPassword(passwordEncoder.encode("password"));
+               user1.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
                user1.setRole(Role.USER);
                userRepository.save(user1);
                createUserInfo(user1, "Bruno", "Campos", "+56922222222", "Calle Norte 456", "Valparaíso", "Chile");
           }
-          if (userRepository.findByUsername("user2") == null) {
+          if (userRepository.findByUsername(USERNAME_USER2) == null) {
                User user2 = new User();
-               user2.setUsername("user2");
+               user2.setUsername(USERNAME_USER2);
                user2.setEmail("user2@demo.com");
-               user2.setPassword(passwordEncoder.encode("password"));
+               user2.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
                user2.setRole(Role.USER);
                userRepository.save(user2);
                createUserInfo(user2, "Carla", "Rojas", "+56933333333", "Pasaje Sur 789", "Concepción", "Chile");
           }
 
-          if (!machineryRepository.existsByNameMachinery("John Deere 5075E Tractor")) {
+          if (!machineryRepository.existsByNameMachinery(MACHINERY_JOHN_DEERE)) {
                MachineryInfo info = new MachineryInfo();
                info.setDescription("Tractor utilitario 75 HP, transmisión PowrReverser 12x12");
                Machinery m = new Machinery();
-               m.setNameMachinery("John Deere 5075E Tractor");
-               m.setStatus("disponible");
+               m.setNameMachinery(MACHINERY_JOHN_DEERE);
+               m.setStatus(STATUS_DISPONIBLE);
                m.setPricePerDay(new BigDecimal("150.00"));
                m.setCategory(tractores);
                m.setMachineryInfo(info);
                m.setImageUrl("/images/john_deere_5075e.png");
                machineryRepository.save(m);
           }
-          if (!machineryRepository.existsByNameMachinery("Case IH Axial-Flow 7150 Combine")) {
+          if (!machineryRepository.existsByNameMachinery(MACHINERY_CASE_IH)) {
                MachineryInfo info = new MachineryInfo();
                info.setDescription("Cosechadora Axial-Flow 7150, motor FPT Cursor 11, rotor único");
                Machinery m = new Machinery();
-               m.setNameMachinery("Case IH Axial-Flow 7150 Combine");
-               m.setStatus("disponible");
+               m.setNameMachinery(MACHINERY_CASE_IH);
+               m.setStatus(STATUS_DISPONIBLE);
                m.setPricePerDay(new BigDecimal("350.00"));
                m.setCategory(cosechadoras);
                m.setMachineryInfo(info);
                m.setImageUrl("/images/Case_IH_Axial-Flow.png");
                machineryRepository.save(m);
           }
-          if (!machineryRepository.existsByNameMachinery("New Holland CR8.90 Combine")) {
+          if (!machineryRepository.existsByNameMachinery(MACHINERY_NEW_HOLLAND)) {
                MachineryInfo info = new MachineryInfo();
                info.setDescription("Cosechadora CR8.90 Twin Rotor, alta capacidad en cereales");
                Machinery m = new Machinery();
-               m.setNameMachinery("New Holland CR8.90 Combine");
-               m.setStatus("arrendada");
+               m.setNameMachinery(MACHINERY_NEW_HOLLAND);
+               m.setStatus(STATUS_ARRENDADA);
                m.setPricePerDay(new BigDecimal("400.00"));
                m.setCategory(cosechadoras);
                m.setMachineryInfo(info);
@@ -152,12 +164,12 @@ public class DataInitializer implements CommandLineRunner {
           }
 
           if (machineryRentalRepository.count() == 0) {
-               User u1 = userRepository.findByUsername("user1");
-               User u2 = userRepository.findByUsername("user2");
-               User admin = userRepository.findByUsername("admin");
-               Machinery jd = machineryRepository.findByNameMachinery("John Deere 5075E Tractor");
-               Machinery caseIH = machineryRepository.findByNameMachinery("Case IH Axial-Flow 7150 Combine");
-               Machinery nh = machineryRepository.findByNameMachinery("New Holland CR8.90 Combine");
+               User u1 = userRepository.findByUsername(USERNAME_USER1);
+               User u2 = userRepository.findByUsername(USERNAME_USER2);
+               User admin = userRepository.findByUsername(USERNAME_ADMIN);
+               Machinery jd = machineryRepository.findByNameMachinery(MACHINERY_JOHN_DEERE);
+               Machinery caseIH = machineryRepository.findByNameMachinery(MACHINERY_CASE_IH);
+               Machinery nh = machineryRepository.findByNameMachinery(MACHINERY_NEW_HOLLAND);
 
                MachineryRental r1 = new MachineryRental();
                r1.setMachinery(nh);

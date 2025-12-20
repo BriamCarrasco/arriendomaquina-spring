@@ -7,6 +7,9 @@ import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -20,13 +23,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class JWTAuthorizationFilterTest {
 
+    @Autowired
+    private JWTAuthorizationFilter filter;
 
-    private final JWTAuthorizationFilter filter = new JWTAuthorizationFilter();
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     private Key signingKey() {
-        return Constants.getSigningKey(Constants.JWT_SECRET_KEY);
+        return Constants.getSigningKey(jwtSecret);
     }
 
     private String buildToken(List<String> authorities, Instant exp) {

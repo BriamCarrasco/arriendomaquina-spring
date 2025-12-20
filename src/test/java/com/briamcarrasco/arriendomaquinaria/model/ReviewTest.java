@@ -2,6 +2,9 @@ package com.briamcarrasco.arriendomaquinaria.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.NullSource;
 
 import java.time.LocalDateTime;
 
@@ -64,11 +67,20 @@ class ReviewTest {
         assertEquals("testuser", review.getUser().getUsername());
     }
 
-    @Test
-    void setRating_shouldSetValue() {
-        review.setRating(5);
+    @ParameterizedTest
+    @ValueSource(ints = { 1, 3, 5, 10, -1 })
+    void setRating_shouldAcceptAnyValue(int rating) {
+        review.setRating(rating);
 
-        assertEquals(5, review.getRating());
+        assertEquals(rating, review.getRating());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    void setRating_withNull_shouldAccept(Integer rating) {
+        review.setRating(rating);
+
+        assertNull(review.getRating());
     }
 
     @Test
@@ -92,27 +104,6 @@ class ReviewTest {
         review.setUpdatedAt(now);
 
         assertEquals(now, review.getUpdatedAt());
-    }
-
-    @Test
-    void setRating_withMinimumValue_shouldAccept() {
-        review.setRating(1);
-
-        assertEquals(1, review.getRating());
-    }
-
-    @Test
-    void setRating_withMaximumValue_shouldAccept() {
-        review.setRating(5);
-
-        assertEquals(5, review.getRating());
-    }
-
-    @Test
-    void setRating_withNull_shouldAccept() {
-        review.setRating(null);
-
-        assertNull(review.getRating());
     }
 
     @Test
@@ -230,20 +221,5 @@ class ReviewTest {
         assertEquals("Muy buena experiencia", review.getComment());
         assertEquals(created, review.getCreatedAt());
         assertEquals(updated, review.getUpdatedAt());
-    }
-
-    @Test
-    void setRating_withValueOutsideRange_shouldAccept() {
-        // El setter acepta cualquier valor, las validaciones se hacen con @Min/@Max
-        review.setRating(10);
-
-        assertEquals(10, review.getRating());
-    }
-
-    @Test
-    void setRating_withNegativeValue_shouldAccept() {
-        review.setRating(-1);
-
-        assertEquals(-1, review.getRating());
     }
 }

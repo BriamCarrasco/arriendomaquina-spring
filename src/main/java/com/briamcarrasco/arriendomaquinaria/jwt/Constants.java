@@ -22,7 +22,6 @@ public class Constants {
     public static final String TOKEN_BEARER_PREFIX = "Bearer ";
     public static final String ISSUER_INFO = "https://www.duocuc.cl/";
     public static final long TOKEN_EXPIRATION_TIME = 1000L * 60 * 60 * 24; // 24h
-    public static final String JWT_SECRET_KEY = "XDWDH3u4tdxebqBp2Iesst01kCurg10QegORWr3igpt"; // Hardcodeada
     public static final String DUPLICATE_MEDIA_ERROR = "duplicate_media";
     public static final String ERROR_KEY = "error";
     public static final String MESSAGE_KEY = "message";

@@ -40,7 +40,7 @@ class UserInfoRepositoryTest {
         UserInfo savedUserInfo = userInfoRepository.save(userInfo);
 
         assertNotNull(savedUserInfo);
-        assertNotNull(savedUserInfo.getId());
+        assertTrue(savedUserInfo.getId() > 0);
         assertEquals("Juan", savedUserInfo.getFirstName());
         assertEquals("Pérez", savedUserInfo.getLastName());
     }

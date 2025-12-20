@@ -6,6 +6,10 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.util.Set;
 
@@ -41,20 +45,27 @@ class ReviewRequestTest {
         assertEquals("Excelente maquinaria", dto.getComment());
     }
 
-    @Test
-    void validation_whenRatingIsValid_shouldPass() {
-        dto.setRating(3);
-        dto.setComment("Buen servicio");
+    @ParameterizedTest
+    @CsvSource({
+            "1, Mínimo",
+            "3, Buen servicio",
+            "4, Muy buena experiencia",
+            "5, Máximo"
+    })
+    void validation_whenRatingIsValid_shouldPass(Integer rating, String comment) {
+        dto.setRating(rating);
+        dto.setComment(comment);
 
         Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
 
         assertTrue(violations.isEmpty());
     }
 
-    @Test
-    void validation_whenRatingIsBelowMinimum_shouldFail() {
-        dto.setRating(0);
-        dto.setComment("Mal servicio");
+    @ParameterizedTest
+    @ValueSource(ints = { 0, -1, 6, 10 })
+    void validation_whenRatingIsOutOfRange_shouldFail(int rating) {
+        dto.setRating(rating);
+        dto.setComment("Comentario válido");
 
         Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
 
@@ -63,82 +74,18 @@ class ReviewRequestTest {
                 .anyMatch(v -> v.getPropertyPath().toString().equals("rating")));
     }
 
-    @Test
-    void validation_whenRatingIsAboveMaximum_shouldFail() {
-        dto.setRating(6);
-        dto.setComment("Excelente");
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("rating")));
-    }
-
-    @Test
-    void validation_whenRatingIsMinimumValue_shouldPass() {
-        dto.setRating(1);
-        dto.setComment("Mínimo");
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertTrue(violations.isEmpty());
-    }
-
-    @Test
-    void validation_whenRatingIsMaximumValue_shouldPass() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = { "   ", "\t", "\n" })
+    void validation_whenCommentIsBlankOrNull_shouldFail(String comment) {
         dto.setRating(5);
-        dto.setComment("Máximo");
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertTrue(violations.isEmpty());
-    }
-
-    @Test
-    void validation_whenCommentIsBlank_shouldFail() {
-        dto.setRating(5);
-        dto.setComment("");
+        dto.setComment(comment);
 
         Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
                 .anyMatch(v -> v.getPropertyPath().toString().equals("comment")));
-    }
-
-    @Test
-    void validation_whenCommentIsNull_shouldFail() {
-        dto.setRating(5);
-        dto.setComment(null);
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("comment")));
-    }
-
-    @Test
-    void validation_whenCommentIsWhitespaceOnly_shouldFail() {
-        dto.setRating(5);
-        dto.setComment("   ");
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("comment")));
-    }
-
-    @Test
-    void validation_whenAllFieldsAreValid_shouldPass() {
-        dto.setRating(4);
-        dto.setComment("Muy buena experiencia");
-
-        Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
-
-        assertTrue(violations.isEmpty());
     }
 
     @Test
@@ -153,20 +100,16 @@ class ReviewRequestTest {
 
     @Test
     void validation_whenRatingIsNull_shouldNotFailMinMaxValidation() {
-        // @Min y @Max solo se aplican si el valor no es null
         dto.setRating(null);
         dto.setComment("Comentario válido");
 
         Set<ConstraintViolation<ReviewRequest>> violations = validator.validate(dto);
 
-        // Solo debería haber un error por rating null si tiene @NotNull
-        // Como no lo tiene en el código original, debería pasar
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void setRating_withNegativeValue_shouldAccept() {
-        // El setter acepta cualquier valor, las validaciones se hacen aparte
         dto.setRating(-5);
 
         assertEquals(-5, dto.getRating());

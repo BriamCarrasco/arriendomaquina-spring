@@ -1,5 +1,6 @@
 package com.briamcarrasco.arriendomaquinaria.security;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,6 +17,8 @@ class JwtAuthenticationEntryPointTest {
 
     private final JwtAuthenticationEntryPoint entryPoint = new JwtAuthenticationEntryPoint();
     private final ObjectMapper mapper = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
+    };
 
     @Test
     void commence_withTokenExpired_returnsExpiredJson() throws Exception {
@@ -31,13 +34,14 @@ class JwtAuthenticationEntryPointTest {
         assertThat(response.getStatus()).isEqualTo(401);
         assertThat(response.getContentType()).isEqualTo("application/json;charset=UTF-8");
 
-        Map<?, ?> body = mapper.readValue(response.getContentAsString(), Map.class);
-        assertThat(((Number) body.get("status")).intValue()).isEqualTo(401);
-        assertThat(body.get("error")).isEqualTo("Unauthorized");
-        assertThat(body.get("code")).isEqualTo("TOKEN_EXPIRED");
-        assertThat(body.get("message")).isEqualTo("El token ha expirado");
-        assertThat(body.get("path")).isEqualTo("/api/expired");
-        assertThat(body.get("timestamp")).isNotNull();
+        Map<String, Object> body = mapper.readValue(response.getContentAsString(), MAP_TYPE);
+        assertThat(body)
+                .containsEntry("status", Integer.valueOf(401))
+                .containsEntry("error", "Unauthorized")
+                .containsEntry("code", "TOKEN_EXPIRED")
+                .containsEntry("message", "El token ha expirado")
+                .containsEntry("path", "/api/expired")
+                .containsKey("timestamp");
         Instant.parse((String) body.get("timestamp"));
     }
 
@@ -55,13 +59,14 @@ class JwtAuthenticationEntryPointTest {
         assertThat(response.getStatus()).isEqualTo(401);
         assertThat(response.getContentType()).isEqualTo("application/json;charset=UTF-8");
 
-        Map<?, ?> body = mapper.readValue(response.getContentAsString(), Map.class);
-        assertThat(((Number) body.get("status")).intValue()).isEqualTo(401);
-        assertThat(body.get("error")).isEqualTo("Unauthorized");
-        assertThat(body.get("code")).isEqualTo("TOKEN_INVALID");
-        assertThat(body.get("message")).isEqualTo("El token es inválido");
-        assertThat(body.get("path")).isEqualTo("/api/invalid");
-        assertThat(body.get("timestamp")).isNotNull();
+        Map<String, Object> body = mapper.readValue(response.getContentAsString(), MAP_TYPE);
+        assertThat(body)
+                .containsEntry("status", Integer.valueOf(401))
+                .containsEntry("error", "Unauthorized")
+                .containsEntry("code", "TOKEN_INVALID")
+                .containsEntry("message", "El token es inválido")
+                .containsEntry("path", "/api/invalid")
+                .containsKey("timestamp");
         Instant.parse((String) body.get("timestamp"));
     }
 
@@ -69,7 +74,6 @@ class JwtAuthenticationEntryPointTest {
     void commence_withNoJwtError_returnsUnauthorizedJson() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("/api/no-token");
-        // no setAttribute for "jwt_error" -> default branch
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         AuthenticationException authEx = mock(AuthenticationException.class);
@@ -79,13 +83,14 @@ class JwtAuthenticationEntryPointTest {
         assertThat(response.getStatus()).isEqualTo(401);
         assertThat(response.getContentType()).isEqualTo("application/json;charset=UTF-8");
 
-        Map<?, ?> body = mapper.readValue(response.getContentAsString(), Map.class);
-        assertThat(((Number) body.get("status")).intValue()).isEqualTo(401);
-        assertThat(body.get("error")).isEqualTo("Unauthorized");
-        assertThat(body.get("code")).isEqualTo("UNAUTHORIZED");
-        assertThat(body.get("message")).isEqualTo("No autenticado o token ausente");
-        assertThat(body.get("path")).isEqualTo("/api/no-token");
-        assertThat(body.get("timestamp")).isNotNull();
+        Map<String, Object> body = mapper.readValue(response.getContentAsString(), MAP_TYPE);
+        assertThat(body)
+                .containsEntry("status", Integer.valueOf(401))
+                .containsEntry("error", "Unauthorized")
+                .containsEntry("code", "UNAUTHORIZED")
+                .containsEntry("message", "No autenticado o token ausente")
+                .containsEntry("path", "/api/no-token")
+                .containsKey("timestamp");
         Instant.parse((String) body.get("timestamp"));
     }
 }

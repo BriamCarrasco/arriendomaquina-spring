@@ -1,6 +1,7 @@
 package com.briamcarrasco.arriendomaquinaria.jwt;
 
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -18,6 +19,9 @@ import static com.briamcarrasco.arriendomaquinaria.jwt.Constants.*;
  */
 @Configuration
 public class JWTAuthtenticationConfig {
+
+        @Value("${jwt.secret}")
+        private String jwtSecret;
 
         /**
          * Genera un token JWT para el usuario y rol especificados.
@@ -40,7 +44,7 @@ public class JWTAuthtenticationConfig {
                                 .subject(username)
                                 .issuedAt(new Date(System.currentTimeMillis()))
                                 .expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
-                                .signWith(getSigningKey(JWT_SECRET_KEY))
+                                .signWith(getSigningKey(jwtSecret))
                                 .compact();
 
                 return TOKEN_BEARER_PREFIX + token;

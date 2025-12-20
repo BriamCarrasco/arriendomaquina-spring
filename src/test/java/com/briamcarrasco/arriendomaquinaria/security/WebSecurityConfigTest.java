@@ -61,7 +61,7 @@ class WebSecurityConfigTest {
         acceptMethod.invoke(customizerObj, builder);
         ResponseCookie cookie = builder.build();
         assertEquals("Lax", cookie.getSameSite());
-        assertFalse(cookie.isHttpOnly());
+        assertTrue(cookie.isHttpOnly());
         assertFalse(cookie.isSecure());
         assertEquals("/", cookie.getPath());
     }

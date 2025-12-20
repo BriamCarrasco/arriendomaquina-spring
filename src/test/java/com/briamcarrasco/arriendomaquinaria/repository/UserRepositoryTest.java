@@ -50,7 +50,7 @@ class UserRepositoryTest {
     void save_shouldPersistUser() {
         User saved = userRepository.save(user1);
 
-        assertNotNull(saved.getId());
+        assertTrue(saved.getId() > 0);
         assertEquals("testuser", saved.getUsername());
         assertEquals("test@example.com", saved.getEmail());
     }

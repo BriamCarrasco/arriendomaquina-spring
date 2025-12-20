@@ -42,7 +42,7 @@ class MachineryMediaRepositoryTest {
         MachineryMedia savedMedia = machineryMediaRepository.save(media);
 
         assertNotNull(savedMedia);
-        assertNotNull(savedMedia.getId());
+        assertTrue(savedMedia.getId() > 0);
         assertEquals("/images/excavator1.jpg", savedMedia.getImgUrl());
         assertEquals("/videos/excavator1.mp4", savedMedia.getVidUrl());
     }

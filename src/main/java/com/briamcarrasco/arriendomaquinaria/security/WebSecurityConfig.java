@@ -60,13 +60,19 @@ public class WebSecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
+                                // CSRF habilitado excepto para /logout y /api/**
+                                // Es seguro deshabilitar CSRF en:
+                                // - /logout: Solo cierra la sesión del usuario actual
+                                // - /api/**: Endpoints REST que usan JWT en Authorization header (stateless)
+                                // Las APIs REST no son vulnerables a CSRF cuando usan bearer tokens
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(cookieCsrfTokenRepository())
-                                                .ignoringRequestMatchers("/logout",
-                                                                "/auth/login"))
+                                                .ignoringRequestMatchers("/logout", "/api/**"))
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                                 .accessDeniedHandler(jsonAccessDeniedHandler))
-                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                                .sessionManagement(sm -> sm
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                                .sessionFixation().newSession())
 
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/landing", "/login", "/auth/login",
@@ -84,13 +90,23 @@ public class WebSecurityConfig {
                                                                 .policyDirectives(
                                                                                 "default-src 'self'; " +
                                                                                                 "base-uri 'self'; " +
+                                                                                                "block-all-mixed-content; "
+                                                                                                +
                                                                                                 "script-src 'self' https://cdn.jsdelivr.net; "
+                                                                                                +
+                                                                                                "script-src-elem 'self' https://cdn.jsdelivr.net; "
+                                                                                                +
+                                                                                                "script-src-attr 'unsafe-inline'; "
                                                                                                 +
                                                                                                 "style-src 'self' https://cdn.jsdelivr.net; "
                                                                                                 +
+                                                                                                "style-src-elem 'self' https://cdn.jsdelivr.net; "
+                                                                                                +
+                                                                                                "style-src-attr 'unsafe-inline'; "
+                                                                                                +
                                                                                                 "img-src 'self' data: https:; "
                                                                                                 +
-                                                                                                "font-src 'self' data:; "
+                                                                                                "font-src 'self' data: https://cdn.jsdelivr.net; "
                                                                                                 +
                                                                                                 "connect-src 'self'; " +
                                                                                                 "form-action 'self'; " +
@@ -101,11 +117,22 @@ public class WebSecurityConfig {
                                                                                                 +
                                                                                                 "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; "
                                                                                                 +
-                                                                                                "upgrade-insecure-requests;"))
+                                                                                                "child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; "
+                                                                                                +
+                                                                                                "worker-src 'self'; " +
+                                                                                                "manifest-src 'self';"))
                                                 .frameOptions(frame -> frame.deny())
+                                                .xssProtection(xss -> xss
+                                                                .headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                                                .contentTypeOptions(contentType -> {
+                                                })
+                                                .referrerPolicy(referrer -> referrer.policy(
+                                                                org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                                                 .httpStrictTransportSecurity(hsts -> hsts
                                                                 .includeSubDomains(true)
-                                                                .maxAgeInSeconds(31536000)))
+                                                                .maxAgeInSeconds(31536000))
+                                                .permissionsPolicyHeader(permissions -> permissions.policy(
+                                                                "geolocation=(), microphone=(), camera=(), payment=(), usb=()")))
                                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
@@ -138,9 +165,9 @@ public class WebSecurityConfig {
         public CookieCsrfTokenRepository cookieCsrfTokenRepository() {
                 CookieCsrfTokenRepository repo = new CookieCsrfTokenRepository();
                 repo.setCookieCustomizer(builder -> builder
-                                .httpOnly(false) // obligatorio para que el form pueda leerlo
-                                .sameSite("Lax") // Strict rompe POST, mantenlo así
-                                .secure(false) // IMPORTANTE EN LOCAL o Chrome NO guarda la cookie
+                                .httpOnly(true)
+                                .sameSite("Lax")
+                                .secure(false)
                                 .path("/"));
                 return repo;
         }
